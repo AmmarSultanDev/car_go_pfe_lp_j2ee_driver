@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/providers/user_provider.dart';
@@ -5,6 +7,7 @@ import 'package:car_go_pfe_lp_j2ee_driver/screens/authentication/signin_screen.d
 import 'package:car_go_pfe_lp_j2ee_driver/screens/dashboard.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -21,6 +24,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  Uint8List? _image;
 
   CommonMethods commonMethods = const CommonMethods();
 
@@ -56,6 +60,12 @@ class _SignupScreenState extends State<SignupScreen> {
         context,
       );
       return false;
+    } else if (_image == null) {
+      commonMethods.displaySnackBar(
+        'Please select a profile picture!',
+        context,
+      );
+      return false;
     }
   }
 
@@ -73,6 +83,7 @@ class _SignupScreenState extends State<SignupScreen> {
       password: _passwordController.text.trim(),
       username: _usernameController.text.trim(),
       userphone: _userphoneController.text.trim(),
+      file: _image!,
     );
 
     if (res != 'Success') {
@@ -92,6 +103,13 @@ class _SignupScreenState extends State<SignupScreen> {
         ),
       );
     }
+  }
+
+  void selectImage() async {
+    Uint8List im = await commonMethods.pickImage(ImageSource.gallery);
+    setState(() {
+      _image = im;
+    });
   }
 
   @override
@@ -127,11 +145,30 @@ class _SignupScreenState extends State<SignupScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 50),
-                  Image.asset('assets/images/logo_white_borders.png',
-                      height: 200, width: 200),
+                  Stack(
+                    children: [
+                      _image != null
+                          ? CircleAvatar(
+                              radius: 86,
+                              backgroundImage: MemoryImage(_image!),
+                            )
+                          : const CircleAvatar(
+                              radius: 86,
+                              backgroundImage:
+                                  AssetImage('assets/images/avatar_man.png'),
+                            ),
+                      Positioned(
+                        bottom: -10,
+                        left: 110,
+                        child: IconButton(
+                            onPressed: selectImage,
+                            icon: const Icon(Icons.add_a_photo)),
+                      )
+                    ],
+                  ),
                   const SizedBox(height: 10),
                   const Text(
-                    'Create a User\'s Account',
+                    'Create a Driver\'s Account',
                   ),
                   // text fields
                   Padding(

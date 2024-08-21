@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/models/user.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/models/user.dart' as model;
 import 'package:car_go_pfe_lp_j2ee_driver/providers/user_provider.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/authentication/signin_screen.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
@@ -28,6 +26,8 @@ class _DashboardState extends State<Dashboard> {
   GoogleMapController? controllerGoogleMap;
 
   Position? currentPositionOfUser;
+
+  Future<model.User?>? _userFuture;
 
   void updateMapTheme(GoogleMapController controller) {
     getJsonFileFromThemes('themes/night_style.json')
@@ -84,36 +84,58 @@ class _DashboardState extends State<Dashboard> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _userFuture =
+        Provider.of<UserProvider>(context, listen: false).refreshUser();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final User? user = Provider.of<UserProvider>(context).getUser;
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              signout();
-            },
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          GoogleMap(
-            mapType: MapType.normal,
-            myLocationEnabled: true,
-            initialCameraPosition: googlePlexInitialPosition,
-            onMapCreated: (GoogleMapController mapController) {
-              controllerGoogleMap = mapController;
-              updateMapTheme(controllerGoogleMap!);
+    return FutureBuilder<model.User?>(
+      future: _userFuture,
+      builder: (BuildContext context, AsyncSnapshot<model.User?> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+              child:
+                  CircularProgressIndicator()); // Show loading spinner while waiting for user data
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          final model.User? user = snapshot.data;
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(user?.displayName ?? 'Driver'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () {
+                    signout();
+                  },
+                ),
+              ],
+            ),
+            body: Stack(
+              children: [
+                GoogleMap(
+                  mapType: MapType.normal,
+                  myLocationEnabled: true,
+                  initialCameraPosition: googlePlexInitialPosition,
+                  onMapCreated: (GoogleMapController mapController) {
+                    controllerGoogleMap = mapController;
+                    updateMapTheme(controllerGoogleMap!);
 
-              googleMapCompleterController.complete(controllerGoogleMap);
+                    googleMapCompleterController.complete(controllerGoogleMap);
 
-              getCurrentLiveLocationOfDriver();
-            },
-          ),
-        ],
-      ),
+                    getCurrentLiveLocationOfDriver();
+                  },
+                ),
+              ],
+            ),
+          );
+        }
+      },
     );
   }
 }

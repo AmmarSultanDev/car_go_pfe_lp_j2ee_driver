@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:car_go_pfe_lp_j2ee_driver/methods/storage_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/user.dart' as model;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,6 +23,7 @@ class AuthMethods {
     required String password,
     required String username,
     required String userphone,
+    required Uint8List file,
   }) async {
     // Register user
     String res = 'Some error occured';
@@ -33,11 +37,15 @@ class AuthMethods {
             .createUserWithEmailAndPassword(email: email, password: password);
 
         if (userCredential.user != null) {
+          String photoUrl = await StorageMethods()
+              .uploadImageToStorage('profilePics', file, false);
+
           model.User user = model.User(
             uid: userCredential.user!.uid,
             displayName: username,
             phoneNumber: userphone,
             email: email,
+            photoUrl: photoUrl,
           );
           // Save user data to Firestore
           await _firestore

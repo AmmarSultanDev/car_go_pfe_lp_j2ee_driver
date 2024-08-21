@@ -1,5 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CommonMethods {
   const CommonMethods();
@@ -26,5 +28,20 @@ class CommonMethods {
         ),
       );
     }
+  }
+
+  pickImage(ImageSource source) async {
+    final ImagePicker imagePicker = ImagePicker();
+    XFile? file = await imagePicker.pickImage(source: source);
+    if (file != null) {
+      var result = await FlutterImageCompress.compressWithFile(
+        file.path,
+        minWidth: 600,
+        minHeight: 600,
+        quality: 88,
+      );
+      return result;
+    }
+    print('No image selected');
   }
 }

@@ -40,7 +40,9 @@ class _SigninScreenState extends State<SigninScreen> {
     } else {
       if (context.mounted) {
         await Provider.of<UserProvider>(context, listen: false).refreshUser();
-        Navigator.of(context).pop();
+        //Navigator.of(context).pop();
+        Navigator.of(context)
+            .popUntil((route) => route.isFirst); // Pop until the first route
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => const Dashboard(),
