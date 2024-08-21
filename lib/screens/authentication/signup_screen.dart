@@ -1,6 +1,4 @@
-import 'dart:math';
 import 'dart:typed_data';
-
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/providers/user_provider.dart';
