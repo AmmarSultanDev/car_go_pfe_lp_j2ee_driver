@@ -7,12 +7,18 @@ class User {
   final String email;
   bool isBlocked = false;
   String? photoUrl;
+  final String vehiculeNumber;
+  final String vehiculeModel;
+  final String vehiculeColor;
 
   User({
     required this.uid,
     required this.displayName,
     required this.phoneNumber,
     required this.email,
+    required this.vehiculeNumber,
+    required this.vehiculeModel,
+    required this.vehiculeColor,
     this.isBlocked = false,
     this.photoUrl,
   });
@@ -21,6 +27,9 @@ class User {
     required this.displayName,
     required this.phoneNumber,
     required this.email,
+    required this.vehiculeNumber,
+    required this.vehiculeModel,
+    required this.vehiculeColor,
   }) : uid = '';
 
   Map<String, dynamic> toJson() => {
@@ -30,6 +39,9 @@ class User {
         'email': email,
         'isBlocked': isBlocked,
         'photoUrl': photoUrl,
+        'vehiculeNumber': vehiculeNumber,
+        'vehiculeModel': vehiculeModel,
+        'vehiculeColor': vehiculeColor,
       };
 
   static User fromSnap(DocumentSnapshot snap) {
@@ -42,6 +54,9 @@ class User {
       email: snapshot['email'],
       isBlocked: snapshot['isBlocked'],
       photoUrl: snapshot['photoUrl'],
+      vehiculeNumber: snapshot['vehiculeNumber'],
+      vehiculeModel: snapshot['vehiculeModel'],
+      vehiculeColor: snapshot['vehiculeColor'],
     );
   }
 }

@@ -88,6 +88,9 @@ class _SignupScreenState extends State<SignupScreen> {
       username: _usernameController.text.trim(),
       userphone: _userphoneController.text.trim(),
       file: _image!,
+      vehiculeNumber: _vehicleNumberController.text.trim(),
+      vehiculeModel: _vehicleModelController.text.trim(),
+      vehiculeColor: _vehicleColorController.text.trim(),
     );
 
     if (res != 'Success') {

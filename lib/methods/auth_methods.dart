@@ -23,6 +23,9 @@ class AuthMethods {
     required String password,
     required String username,
     required String userphone,
+    required String vehiculeNumber,
+    required String vehiculeModel,
+    required String vehiculeColor,
     required Uint8List file,
   }) async {
     // Register user
@@ -32,13 +35,17 @@ class AuthMethods {
       if (username.isNotEmpty &&
           userphone.isNotEmpty &&
           email.isNotEmpty &&
-          password.isNotEmpty) {
+          password.isNotEmpty &&
+          file.isNotEmpty &&
+          vehiculeNumber.isNotEmpty &&
+          vehiculeModel.isNotEmpty &&
+          vehiculeColor.isNotEmpty) {
         UserCredential userCredential = await _auth
             .createUserWithEmailAndPassword(email: email, password: password);
 
         if (userCredential.user != null) {
           String photoUrl = await StorageMethods()
-              .uploadImageToStorage('profilePics', file, false);
+              .uploadImageToStorage('driversProfilePics', file, false);
 
           model.User user = model.User(
             uid: userCredential.user!.uid,
@@ -46,6 +53,9 @@ class AuthMethods {
             phoneNumber: userphone,
             email: email,
             photoUrl: photoUrl,
+            vehiculeNumber: vehiculeNumber,
+            vehiculeModel: vehiculeModel,
+            vehiculeColor: vehiculeColor,
           );
           // Save user data to Firestore
           await _firestore
