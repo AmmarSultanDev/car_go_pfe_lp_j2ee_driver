@@ -1,15 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
-import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/user.dart' as model;
 import 'package:car_go_pfe_lp_j2ee_driver/providers/user_provider.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/screens/authentication/signin_screen.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/screens/earning_screen.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/screens/home_screen.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/screens/profile_screen.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/screens/trips_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 class Dashboard extends StatefulWidget {
@@ -19,69 +15,38 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
-  final Completer<GoogleMapController> googleMapCompleterController =
-      Completer<GoogleMapController>();
-
-  GoogleMapController? controllerGoogleMap;
-
-  Position? currentPositionOfUser;
-
+class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   Future<model.User?>? _userFuture;
 
-  void updateMapTheme(GoogleMapController controller) {
-    getJsonFileFromThemes('themes/night_style.json')
-        .then((value) => setGoogleMapStyle(value, controller));
+  TabController? tabController;
+  int selectedIndex = 0;
+
+  onBarItemTap(int index) {
+    setState(() {
+      selectedIndex = index;
+      tabController!.index = selectedIndex;
+    });
   }
 
-  Future<String> getJsonFileFromThemes(String mapStylePath) async {
-    ByteData byteData = await rootBundle.load(mapStylePath);
-    var list = byteData.buffer
-        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
-    return utf8.decode(list);
-  }
+  // signout() async {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (context) => const LoadingDialog(messageText: 'Signing out ...'),
+  //   );
 
-  setGoogleMapStyle(String googleMapStyle, GoogleMapController controller) {
-    controller.setMapStyle(googleMapStyle);
-  }
+  //   await AuthMethods().signoutUser();
 
-  getCurrentLiveLocationOfDriver() async {
-    Position positionOfUser = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.bestForNavigation,
-    );
-    currentPositionOfUser = positionOfUser;
+  //   if (context.mounted) {
+  //     Navigator.of(context).pop(); // Close the loading dialog
 
-    LatLng positionOfUserInLatLng = LatLng(
-        currentPositionOfUser!.latitude, currentPositionOfUser!.longitude);
-
-    CameraPosition cameraPosition = CameraPosition(
-      target: positionOfUserInLatLng,
-      zoom: 14.4746,
-    );
-
-    controllerGoogleMap!
-        .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-  }
-
-  signout() async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const LoadingDialog(messageText: 'Signing out ...'),
-    );
-
-    await AuthMethods().signoutUser();
-
-    if (context.mounted) {
-      Navigator.of(context).pop(); // Close the loading dialog
-
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const SigninScreen(),
-        ),
-      );
-    }
-  }
+  //     Navigator.of(context).pushReplacement(
+  //       MaterialPageRoute(
+  //         builder: (context) => const SigninScreen(),
+  //       ),
+  //     );
+  //   }
+  // }
 
   @override
   void initState() {
@@ -89,6 +54,15 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     _userFuture =
         Provider.of<UserProvider>(context, listen: false).refreshUser();
+
+    tabController = TabController(length: 4, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    tabController!.dispose();
   }
 
   @override
@@ -105,31 +79,38 @@ class _DashboardState extends State<Dashboard> {
         } else {
           final model.User? user = snapshot.data;
           return Scaffold(
-            appBar: AppBar(
-              title: Text(user?.displayName ?? 'Driver'),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.logout),
-                  onPressed: () {
-                    signout();
-                  },
-                ),
+            body: TabBarView(
+              controller: tabController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: const [
+                HomeScreen(),
+                EarningScreen(),
+                TripsScreen(),
+                ProfileScreen(),
               ],
             ),
-            body: Stack(
-              children: [
-                GoogleMap(
-                  mapType: MapType.normal,
-                  myLocationEnabled: true,
-                  initialCameraPosition: googlePlexInitialPosition,
-                  onMapCreated: (GoogleMapController mapController) {
-                    controllerGoogleMap = mapController;
-                    updateMapTheme(controllerGoogleMap!);
-
-                    googleMapCompleterController.complete(controllerGoogleMap);
-
-                    getCurrentLiveLocationOfDriver();
-                  },
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: selectedIndex,
+              selectedItemColor: Theme.of(context).primaryColor,
+              unselectedItemColor: Theme.of(context).unselectedWidgetColor,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              onTap: onBarItemTap,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.monetization_on),
+                  label: 'Earnings',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.history),
+                  label: 'Trips',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: 'Profile',
                 ),
               ],
             ),

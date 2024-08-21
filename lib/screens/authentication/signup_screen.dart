@@ -92,7 +92,7 @@ class _SignupScreenState extends State<SignupScreen> {
     }
   }
 
-  registerNewUser() async {
+  registerNewDriver() async {
     if (!context.mounted) return;
     showDialog(
       context: context,
@@ -282,7 +282,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             return;
                           }
 
-                          registerNewUser();
+                          registerNewDriver();
                         },
                         child: const Text(
                           'Sign Up',
