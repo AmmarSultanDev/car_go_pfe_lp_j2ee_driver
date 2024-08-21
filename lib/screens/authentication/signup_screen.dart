@@ -24,6 +24,10 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final TextEditingController _vehicleNumberController =
+      TextEditingController();
+  final TextEditingController _vehicleModelController = TextEditingController();
+  final TextEditingController _vehicleColorController = TextEditingController();
   Uint8List? _image;
 
   CommonMethods commonMethods = const CommonMethods();
@@ -120,6 +124,9 @@ class _SignupScreenState extends State<SignupScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _vehicleNumberController.dispose();
+    _vehicleModelController.dispose();
+    _vehicleColorController.dispose();
   }
 
   @override
@@ -138,129 +145,152 @@ class _SignupScreenState extends State<SignupScreen> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(10),
-            child: ConstrainedBox(
-              constraints:
-                  BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 50),
-                  Stack(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 50),
+                Stack(
+                  children: [
+                    _image != null
+                        ? CircleAvatar(
+                            radius: 86,
+                            backgroundImage: MemoryImage(_image!),
+                          )
+                        : const CircleAvatar(
+                            radius: 86,
+                            backgroundImage:
+                                AssetImage('assets/images/avatar_man.png'),
+                          ),
+                    Positioned(
+                      bottom: -10,
+                      left: 110,
+                      child: IconButton(
+                          onPressed: selectImage,
+                          icon: const Icon(Icons.add_a_photo)),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Create a Driver\'s Account',
+                ),
+                // text fields
+                Padding(
+                  padding: const EdgeInsets.all(22),
+                  child: Column(
                     children: [
-                      _image != null
-                          ? CircleAvatar(
-                              radius: 86,
-                              backgroundImage: MemoryImage(_image!),
-                            )
-                          : const CircleAvatar(
-                              radius: 86,
-                              backgroundImage:
-                                  AssetImage('assets/images/avatar_man.png'),
+                      TextField(
+                        controller: _usernameController,
+                        keyboardType: TextInputType.text,
+                        decoration: const InputDecoration(
+                          labelText: 'Username',
+                          hintText: 'Enter your username',
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: _userphoneController,
+                        keyboardType: TextInputType.phone,
+                        decoration: const InputDecoration(
+                          labelText: 'Phone number',
+                          hintText: 'Enter your phone number',
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          hintText: 'Enter your email',
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: _passwordController,
+                        keyboardType: TextInputType.text,
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          labelText: 'Password',
+                          hintText: 'Enter your password',
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: _confirmPasswordController,
+                        keyboardType: TextInputType.text,
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          labelText: 'Confirm password',
+                          hintText: 'Confirm your password',
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: _vehicleNumberController,
+                        keyboardType: TextInputType.text,
+                        decoration: const InputDecoration(
+                          labelText: 'Vehicle number',
+                          hintText: 'Enter your vehicle number',
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: _vehicleModelController,
+                        keyboardType: TextInputType.text,
+                        decoration: const InputDecoration(
+                          labelText: 'Vehicle model',
+                          hintText: 'Enter your vehicle model',
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: _vehicleColorController,
+                        keyboardType: TextInputType.text,
+                        decoration: const InputDecoration(
+                          labelText: 'Vehicle color',
+                          hintText: 'Enter your vehicle color',
+                        ),
+                      ),
+                      const SizedBox(height: 22),
+                      ElevatedButton(
+                        onPressed: () {
+                          checkNetwork();
+                          if (signUpFormValidation() == false) {
+                            return;
+                          }
+
+                          registerNewUser();
+                        },
+                        child: const Text(
+                          'Sign Up',
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Already have an account?',
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) => const SigninScreen(),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              'Sign In',
                             ),
-                      Positioned(
-                        bottom: -10,
-                        left: 110,
-                        child: IconButton(
-                            onPressed: selectImage,
-                            icon: const Icon(Icons.add_a_photo)),
-                      )
+                          ),
+                        ],
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Create a Driver\'s Account',
-                  ),
-                  // text fields
-                  Padding(
-                    padding: const EdgeInsets.all(22),
-                    child: Column(
-                      children: [
-                        TextField(
-                          controller: _usernameController,
-                          keyboardType: TextInputType.text,
-                          decoration: const InputDecoration(
-                            labelText: 'Username',
-                            hintText: 'Enter your username',
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: _userphoneController,
-                          keyboardType: TextInputType.phone,
-                          decoration: const InputDecoration(
-                            labelText: 'Phone number',
-                            hintText: 'Enter your phone number',
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: _emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(
-                            labelText: 'Email',
-                            hintText: 'Enter your email',
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: _passwordController,
-                          keyboardType: TextInputType.text,
-                          obscureText: true,
-                          decoration: const InputDecoration(
-                            labelText: 'Password',
-                            hintText: 'Enter your password',
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: _confirmPasswordController,
-                          keyboardType: TextInputType.text,
-                          obscureText: true,
-                          decoration: const InputDecoration(
-                            labelText: 'Confirm password',
-                            hintText: 'Confirm your password',
-                          ),
-                        ),
-                        const SizedBox(height: 22),
-                        ElevatedButton(
-                          onPressed: () {
-                            checkNetwork();
-                            if (signUpFormValidation() == false) {
-                              return;
-                            }
-
-                            registerNewUser();
-                          },
-                          child: const Text(
-                            'Sign Up',
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Already have an account?',
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (context) => const SigninScreen(),
-                                  ),
-                                );
-                              },
-                              child: const Text(
-                                'Sign In',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
