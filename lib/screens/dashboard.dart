@@ -94,6 +94,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
               selectedItemColor: Theme.of(context).primaryColor,
               unselectedItemColor: Theme.of(context).unselectedWidgetColor,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              type: BottomNavigationBarType.fixed,
               onTap: onBarItemTap,
               items: const [
                 BottomNavigationBarItem(
