@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
@@ -67,6 +68,24 @@ class _SignupScreenState extends State<SignupScreen> {
     } else if (_image == null) {
       commonMethods.displaySnackBar(
         'Please select a profile picture!',
+        context,
+      );
+      return false;
+    } else if (_vehicleNumberController.text.trim().length < 3) {
+      commonMethods.displaySnackBar(
+        'Vehicle number must be at least 3 characters long!',
+        context,
+      );
+      return false;
+    } else if (_vehicleModelController.text.trim().length < 3) {
+      commonMethods.displaySnackBar(
+        'Vehicle model must be at least 3 characters long!',
+        context,
+      );
+      return false;
+    } else if (_vehicleColorController.text.trim().length < 3) {
+      commonMethods.displaySnackBar(
+        'Vehicle color must be at least 3 characters long!',
         context,
       );
       return false;
