@@ -10,7 +10,7 @@ class AuthMethods {
     User currentUser = _auth.currentUser!;
 
     DocumentSnapshot snap =
-        await _firestore.collection('users').doc(currentUser.uid).get();
+        await _firestore.collection('drivers').doc(currentUser.uid).get();
 
     return model.User.fromSnap(snap);
   }
@@ -41,7 +41,7 @@ class AuthMethods {
           );
           // Save user data to Firestore
           await _firestore
-              .collection('users')
+              .collection('drivers')
               .doc(userCredential.user!.uid)
               .set(user.toJson());
         }
@@ -71,7 +71,7 @@ class AuthMethods {
             email: email, password: password);
         if (userCredential.user != null) {
           DocumentSnapshot snap = await _firestore
-              .collection('users')
+              .collection('drivers')
               .doc(userCredential.user!.uid)
               .get();
           model.User user = model.User.fromSnap(snap);
