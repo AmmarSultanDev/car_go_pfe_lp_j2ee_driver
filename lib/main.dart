@@ -16,7 +16,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  askForPermission();
+  await askForPermission();
 
   runApp(const MainApp());
 }
@@ -90,10 +90,10 @@ class MainApp extends StatelessWidget {
                 );
               } else if (snapshot.hasData) {
                 return status == PermissionStatus.granted
-                    ? const Dashboard()
-                    : const SigninScreen();
+                    ? Dashboard()
+                    : SigninScreen();
               }
-              return const SigninScreen();
+              return SigninScreen();
             }),
       ),
     );

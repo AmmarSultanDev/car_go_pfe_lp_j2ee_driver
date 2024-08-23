@@ -9,6 +9,7 @@ import 'package:car_go_pfe_lp_j2ee_driver/screens/dashboard.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -30,6 +31,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _vehicleModelController = TextEditingController();
   final TextEditingController _vehicleColorController = TextEditingController();
   Uint8List? _image;
+  var status;
 
   CommonMethods commonMethods = const CommonMethods();
 
@@ -131,15 +133,22 @@ class _SignupScreenState extends State<SignupScreen> {
     }
   }
 
-  void selectImage() async {
+  askForPermission() async {
+    status = await Permission.photos.status;
+    if (status == PermissionStatus.denied) {
+      await Permission.photos.request();
+    }
+  }
+
+  selectImage() async {
     // Show a loading spinner while the image picker is running
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const CircularProgressIndicator();
-      },
+      builder: (context) => LoadingDialog(messageText: 'Loading image...'),
     );
+
+    await askForPermission();
 
     // Run the image picker operation
     Uint8List? im = await commonMethods.pickImage(ImageSource.gallery);
@@ -316,7 +325,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             onPressed: () {
                               Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                  builder: (context) => const SigninScreen(),
+                                  builder: (context) => SigninScreen(),
                                 ),
                               );
                             },
