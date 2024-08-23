@@ -10,12 +10,24 @@ class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<model.User> getUserDetails() async {
-    User currentUser = _auth.currentUser!;
+    User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      DocumentSnapshot snap =
+          await _firestore.collection('drivers').doc(currentUser.uid).get();
+      if (snap.exists) {
+        print(snap.toString());
+        return model.User.fromSnap(snap);
+      }
+    }
 
-    DocumentSnapshot snap =
-        await _firestore.collection('drivers').doc(currentUser.uid).get();
-
-    return model.User.fromSnap(snap);
+    return model.User(
+        uid: 'uid',
+        displayName: '',
+        phoneNumber: 'phoneNumber',
+        email: 'email',
+        vehiculeNumber: 'vehiculeNumber',
+        vehiculeModel: 'vehiculeModel',
+        vehiculeColor: 'vehiculeColor');
   }
 
   Future<String> signupUser({

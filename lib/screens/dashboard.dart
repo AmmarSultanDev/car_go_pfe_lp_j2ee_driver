@@ -28,39 +28,18 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     });
   }
 
-  // signout() async {
-  //   showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (context) => const LoadingDialog(messageText: 'Signing out ...'),
-  //   );
-
-  //   await AuthMethods().signoutUser();
-
-  //   if (context.mounted) {
-  //     Navigator.of(context).pop(); // Close the loading dialog
-
-  //     Navigator.of(context).pushReplacement(
-  //       MaterialPageRoute(
-  //         builder: (context) => const SigninScreen(),
-  //       ),
-  //     );
-  //   }
-  // }
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _userFuture =
         Provider.of<UserProvider>(context, listen: false).refreshUser();
 
     tabController = TabController(length: 4, vsync: this);
+    print(_userFuture.toString());
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     tabController!.dispose();
   }
@@ -68,56 +47,60 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<model.User?>(
-      future: _userFuture,
-      builder: (BuildContext context, AsyncSnapshot<model.User?> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-              child:
-                  CircularProgressIndicator()); // Show loading spinner while waiting for user data
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          final model.User? user = snapshot.data;
-          return Scaffold(
-            body: TabBarView(
-              controller: tabController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: const [
-                HomeScreen(),
-                EarningScreen(),
-                TripsScreen(),
-                ProfileScreen(),
-              ],
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: selectedIndex,
-              selectedItemColor: Theme.of(context).primaryColor,
-              unselectedItemColor: Theme.of(context).unselectedWidgetColor,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              type: BottomNavigationBarType.fixed,
-              onTap: onBarItemTap,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
+        future: _userFuture,
+        builder: (BuildContext context, AsyncSnapshot<model.User?> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+                child:
+                    CircularProgressIndicator()); // Show loading spinner while waiting for user data
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            final model.User? user = snapshot.data;
+            if (user == null) {
+              return const Center(
+                  child: Text('No user data found')); // Handle null user here
+            } else {
+              return Scaffold(
+                body: TabBarView(
+                  controller: tabController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: const [
+                    HomeScreen(),
+                    EarningScreen(),
+                    TripsScreen(),
+                    ProfileScreen(),
+                  ],
                 ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.monetization_on),
-                  label: 'Earnings',
+                bottomNavigationBar: BottomNavigationBar(
+                  currentIndex: selectedIndex,
+                  selectedItemColor: Theme.of(context).primaryColor,
+                  unselectedItemColor: Theme.of(context).unselectedWidgetColor,
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  type: BottomNavigationBarType.fixed,
+                  onTap: onBarItemTap,
+                  items: const [
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.home),
+                      label: 'Home',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.monetization_on),
+                      label: 'Earnings',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.history),
+                      label: 'Trips',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.person),
+                      label: 'Profile',
+                    ),
+                  ],
                 ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.history),
-                  label: 'Trips',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person),
-                  label: 'Profile',
-                ),
-              ],
-            ),
-          );
-        }
-      },
-    );
+              );
+            }
+          }
+        });
   }
 }

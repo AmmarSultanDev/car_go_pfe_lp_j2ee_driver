@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   setGoogleMapStyle(String googleMapStyle, GoogleMapController controller) {
+    // ignore: deprecated_member_use
     controller.setMapStyle(googleMapStyle);
   }
 

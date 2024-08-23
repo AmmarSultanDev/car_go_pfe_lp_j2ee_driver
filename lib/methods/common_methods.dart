@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image/image.dart' as img;
 
 class CommonMethods {
   const CommonMethods();
@@ -39,9 +40,15 @@ class CommonMethods {
         minWidth: 600,
         minHeight: 600,
         quality: 88,
+        format: CompressFormat.png, // Add this line
       );
-      return result;
+      if (result == null) {
+        return null;
+      }
+      img.Image? image = img.decodeImage(result);
+      if (image != null) {
+        return img.encodePng(image);
+      }
     }
-    print('No image selected');
   }
 }

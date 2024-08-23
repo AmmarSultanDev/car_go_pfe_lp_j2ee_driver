@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:typed_data';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
@@ -130,8 +132,22 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   void selectImage() async {
-    // check if a picture is chosen
+    // Show a loading spinner while the image picker is running
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const CircularProgressIndicator();
+      },
+    );
+
+    // Run the image picker operation
     Uint8List? im = await commonMethods.pickImage(ImageSource.gallery);
+
+    // Dismiss the loading spinner
+    Navigator.of(context).pop();
+
+    // Update the state with the selected image
     if (im != null) {
       setState(() {
         _image = im;

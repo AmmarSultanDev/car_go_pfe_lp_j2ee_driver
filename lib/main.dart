@@ -9,17 +9,23 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
+var status;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await Permission.locationWhenInUse.isDenied.then((valueOfPermission) {
-    if (valueOfPermission) {
-      Permission.locationWhenInUse.request();
-    }
-  });
+
+  askForPermission();
+
   runApp(const MainApp());
+}
+
+askForPermission() async {
+  status = await Permission.locationWhenInUse.status;
+  if (status == PermissionStatus.denied) {
+    await Permission.locationWhenInUse.request();
+  }
 }
 
 class MainApp extends StatelessWidget {
@@ -83,7 +89,9 @@ class MainApp extends StatelessWidget {
                   child: Text('Something went wrong!'),
                 );
               } else if (snapshot.hasData) {
-                return const Dashboard();
+                return status == PermissionStatus.granted
+                    ? const Dashboard()
+                    : const SigninScreen();
               }
               return const SigninScreen();
             }),

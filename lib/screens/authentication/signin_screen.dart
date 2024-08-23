@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/providers/user_provider.dart';
@@ -40,7 +42,6 @@ class _SigninScreenState extends State<SigninScreen> {
     } else {
       if (context.mounted) {
         await Provider.of<UserProvider>(context, listen: false).refreshUser();
-        //Navigator.of(context).pop();
         Navigator.of(context)
             .popUntil((route) => route.isFirst); // Pop until the first route
         Navigator.of(context).pushReplacement(
@@ -54,7 +55,6 @@ class _SigninScreenState extends State<SigninScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();

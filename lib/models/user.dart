@@ -45,18 +45,31 @@ class User {
       };
 
   static User fromSnap(DocumentSnapshot snap) {
-    var snapshot = snap.data() as Map<String, dynamic>;
+    var snapshot;
+
+    if (snap.toString().length > 0) {
+      snapshot = snap.data() as Map<String, dynamic>;
+
+      return User(
+        uid: snapshot['uid'], // Add the 'uid' named parameter here
+        displayName: snapshot['displayName'],
+        phoneNumber: snapshot['phoneNumber'],
+        email: snapshot['email'],
+        isBlocked: snapshot['isBlocked'],
+        photoUrl: snapshot['photoUrl'],
+        vehiculeNumber: snapshot['vehiculeNumber'],
+        vehiculeModel: snapshot['vehiculeModel'],
+        vehiculeColor: snapshot['vehiculeColor'],
+      );
+    }
 
     return User(
-      uid: snapshot['uid'], // Add the 'uid' named parameter here
-      displayName: snapshot['displayName'],
-      phoneNumber: snapshot['phoneNumber'],
-      email: snapshot['email'],
-      isBlocked: snapshot['isBlocked'],
-      photoUrl: snapshot['photoUrl'],
-      vehiculeNumber: snapshot['vehiculeNumber'],
-      vehiculeModel: snapshot['vehiculeModel'],
-      vehiculeColor: snapshot['vehiculeColor'],
-    );
+        uid: 'uid',
+        displayName: 'displayName',
+        phoneNumber: 'phoneNumber',
+        email: 'email',
+        vehiculeNumber: 'vehiculeNumber',
+        vehiculeModel: 'vehiculeModel',
+        vehiculeColor: 'vehiculeColor');
   }
 }

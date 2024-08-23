@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/authentication/signin_screen.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
