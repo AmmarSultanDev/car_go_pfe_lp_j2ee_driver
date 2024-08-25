@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +21,10 @@ class _HomeScreenState extends State<HomeScreen> {
   GoogleMapController? controllerGoogleMap;
 
   Position? currentPositionOfUser;
+
+  Color driverStatusColor = Colors.green;
+  String driverStatusText = 'Go Online';
+  bool isDriverAvailable = false;
 
   void updateMapTheme(GoogleMapController controller, BuildContext context) {
     String mapStylePath = Theme.of(context).brightness == Brightness.dark
@@ -64,7 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Stack(
       children: [
         GoogleMap(
-          myLocationButtonEnabled: false,
+          padding: Platform.isAndroid
+              ? const EdgeInsets.only(top: 55, right: 10)
+              : const EdgeInsets.only(bottom: 16, right: 28, left: 16),
+          myLocationButtonEnabled: true,
           zoomControlsEnabled: false,
           mapType: MapType.normal,
           myLocationEnabled: true,
@@ -78,6 +86,31 @@ class _HomeScreenState extends State<HomeScreen> {
             getCurrentLiveLocationOfDriver();
           },
         ),
+
+        // go online offline conatiner
+        Positioned(
+          top: 61,
+          left: 0,
+          right: 0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: driverStatusColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: Text(
+                  driverStatusText,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+            ],
+          ),
+        )
       ],
     );
   }
