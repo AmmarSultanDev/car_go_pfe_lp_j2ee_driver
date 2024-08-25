@@ -68,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
           zoomControlsEnabled: false,
           mapType: MapType.normal,
           myLocationEnabled: true,
-          initialCameraPosition: googlePlexInitialPosition,
+          initialCameraPosition: casablancaInitialPosition,
           onMapCreated: (GoogleMapController mapController) {
             controllerGoogleMap = mapController;
             updateMapTheme(controllerGoogleMap!, context);
