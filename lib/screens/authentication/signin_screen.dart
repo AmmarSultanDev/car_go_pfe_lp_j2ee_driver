@@ -22,12 +22,14 @@ class _SigninScreenState extends State<SigninScreen> {
   CommonMethods commonMethods = const CommonMethods();
 
   signin() async {
-    if (!context.mounted) return;
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const LoadingDialog(messageText: 'Signing in ...'),
-    );
+    if (context.mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) =>
+            const LoadingDialog(messageText: 'Signing in ...'),
+      );
+    }
 
     String res = await AuthMethods().signinUser(
       email: _emailController.text.trim(),
@@ -40,16 +42,14 @@ class _SigninScreenState extends State<SigninScreen> {
         commonMethods.displaySnackBar(res, context);
       }
     } else {
-      if (context.mounted) {
-        await Provider.of<UserProvider>(context, listen: false).refreshUser();
-        Navigator.of(context)
-            .popUntil((route) => route.isFirst); // Pop until the first route
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => const Dashboard(),
-          ),
-        );
-      }
+      await Provider.of<UserProvider>(context, listen: false).refreshUser();
+      Navigator.of(context)
+          .popUntil((route) => route.isFirst); // Pop until the first route
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const Dashboard(),
+        ),
+      );
     }
   }
 
@@ -60,13 +60,13 @@ class _SigninScreenState extends State<SigninScreen> {
     _passwordController.dispose();
   }
 
+  checkNetwork() async {
+    // Check network connection
+    await commonMethods.checkConnectivity(context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    void checkNetwork() async {
-      // Check network connection
-      await commonMethods.checkConnectivity(context);
-    }
-
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.symmetric(
@@ -114,9 +114,9 @@ class _SigninScreenState extends State<SigninScreen> {
                         ),
                         const SizedBox(height: 22),
                         ElevatedButton(
-                          onPressed: () {
-                            checkNetwork();
-                            signin();
+                          onPressed: () async {
+                            await checkNetwork();
+                            await signin();
                           },
                           child: const Text(
                             'Sign In',
