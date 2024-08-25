@@ -1,17 +1,28 @@
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/models/user.dart' as model;
+import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart' as model;
 import 'package:flutter/material.dart';
 
 class UserProvider with ChangeNotifier {
-  model.User? _user;
+  model.Driver? _user;
   final AuthMethods _authMethods = AuthMethods();
 
-  model.User? get getUser => _user;
+  model.Driver? get getUser => _user;
 
-  Future<model.User?> refreshUser() async {
-    _user = await _authMethods.getUserDetails();
+  Future<model.Driver?> refreshUser() async {
+    model.Driver? user = await _authMethods.getUserDetails();
 
-    notifyListeners();
-    return _user;
+    Future.microtask(() {
+      _user = user;
+      notifyListeners();
+    });
+
+    return user;
+  }
+
+  set setUser(model.Driver user) {
+    Future.microtask(() {
+      _user = user;
+      notifyListeners();
+    });
   }
 }

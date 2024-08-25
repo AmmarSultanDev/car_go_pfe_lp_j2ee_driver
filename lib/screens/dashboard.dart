@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:car_go_pfe_lp_j2ee_driver/models/user.dart' as model;
+import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart' as model;
 import 'package:car_go_pfe_lp_j2ee_driver/providers/user_provider.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/earning_screen.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/home_screen.dart';
@@ -16,7 +16,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
-  Future<model.User?>? _userFuture;
+  Future<model.Driver?>? _userFuture;
 
   TabController? tabController;
   int selectedIndex = 0;
@@ -46,9 +46,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<model.User?>(
+    return FutureBuilder<model.Driver?>(
         future: _userFuture,
-        builder: (BuildContext context, AsyncSnapshot<model.User?> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<model.Driver?> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
                 child:
@@ -56,7 +56,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            final model.User? user = snapshot.data;
+            final model.Driver? user = snapshot.data;
             if (user == null) {
               return const Center(
                   child: Text('No user data found')); // Handle null user here

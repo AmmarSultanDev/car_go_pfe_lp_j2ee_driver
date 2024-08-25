@@ -1,26 +1,29 @@
 import 'dart:typed_data';
 
 import 'package:car_go_pfe_lp_j2ee_driver/methods/storage_methods.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/models/user.dart' as model;
+import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart' as model;
+import 'package:car_go_pfe_lp_j2ee_driver/providers/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AuthMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<model.User> getUserDetails() async {
+  Future<model.Driver> getUserDetails() async {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       DocumentSnapshot snap =
           await _firestore.collection('drivers').doc(currentUser.uid).get();
       if (snap.exists) {
         print(snap.toString());
-        return model.User.fromSnap(snap);
+        return model.Driver.fromSnap(snap);
       }
     }
 
-    return model.User(
+    return model.Driver(
         uid: 'uid',
         displayName: '',
         phoneNumber: 'phoneNumber',
@@ -39,6 +42,7 @@ class AuthMethods {
     required String vehiculeModel,
     required String vehiculeColor,
     required Uint8List file,
+    required BuildContext context,
   }) async {
     // Register user
     String res = 'Some error occured';
@@ -59,7 +63,7 @@ class AuthMethods {
           String photoUrl = await StorageMethods()
               .uploadImageToStorage('driversProfilePics', file, false);
 
-          model.User user = model.User(
+          model.Driver user = model.Driver(
             uid: userCredential.user!.uid,
             displayName: username,
             phoneNumber: userphone,
@@ -74,8 +78,23 @@ class AuthMethods {
               .collection('drivers')
               .doc(userCredential.user!.uid)
               .set(user.toJson());
+
+          DocumentSnapshot newUserSnap = await _firestore
+              .collection('drivers')
+              .doc(userCredential.user!.uid)
+              .get();
+
+          model.Driver newUserFromFirestore =
+              model.Driver.fromSnap(newUserSnap);
+
+          if (context.mounted) {
+            Provider.of<UserProvider>(context, listen: false).setUser =
+                newUserFromFirestore;
+
+            res = 'Success';
+            return res;
+          }
         }
-        res = 'Success';
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -104,7 +123,7 @@ class AuthMethods {
               .collection('drivers')
               .doc(userCredential.user!.uid)
               .get();
-          model.User user = model.User.fromSnap(snap);
+          model.Driver user = model.Driver.fromSnap(snap);
           if (user.isBlocked == true) {
             await _auth.signOut();
             res = 'Your account has been blocked';

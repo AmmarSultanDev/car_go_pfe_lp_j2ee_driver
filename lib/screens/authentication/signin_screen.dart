@@ -2,12 +2,8 @@
 
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/providers/user_provider.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/authentication/signup_screen.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/screens/dashboard.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class SigninScreen extends StatefulWidget {
   const SigninScreen({super.key});
@@ -22,15 +18,6 @@ class _SigninScreenState extends State<SigninScreen> {
   CommonMethods commonMethods = const CommonMethods();
 
   signin() async {
-    if (context.mounted) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) =>
-            const LoadingDialog(messageText: 'Signing in ...'),
-      );
-    }
-
     String res = await AuthMethods().signinUser(
       email: _emailController.text.trim(),
       password: _passwordController.text.trim(),
@@ -38,18 +25,8 @@ class _SigninScreenState extends State<SigninScreen> {
 
     if (res != 'Success') {
       if (context.mounted) {
-        Navigator.of(context).pop();
         commonMethods.displaySnackBar(res, context);
       }
-    } else {
-      await Provider.of<UserProvider>(context, listen: false).refreshUser();
-      Navigator.of(context)
-          .popUntil((route) => route.isFirst); // Pop until the first route
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const Dashboard(),
-        ),
-      );
     }
   }
 
@@ -58,11 +35,6 @@ class _SigninScreenState extends State<SigninScreen> {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-  }
-
-  checkNetwork() async {
-    // Check network connection
-    await commonMethods.checkConnectivity(context);
   }
 
   @override
@@ -115,7 +87,7 @@ class _SigninScreenState extends State<SigninScreen> {
                         const SizedBox(height: 22),
                         ElevatedButton(
                           onPressed: () async {
-                            await checkNetwork();
+                            await commonMethods.checkConnectivity(context);
                             await signin();
                           },
                           child: const Text(

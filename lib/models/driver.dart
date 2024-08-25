@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class User {
+class Driver {
   String uid;
   final String displayName;
   final String phoneNumber;
@@ -11,7 +11,7 @@ class User {
   final String vehiculeModel;
   final String vehiculeColor;
 
-  User({
+  Driver({
     required this.uid,
     required this.displayName,
     required this.phoneNumber,
@@ -23,7 +23,7 @@ class User {
     this.photoUrl,
   });
 
-  User.withoutUid({
+  Driver.withoutUid({
     required this.displayName,
     required this.phoneNumber,
     required this.email,
@@ -44,13 +44,13 @@ class User {
         'vehiculeColor': vehiculeColor,
       };
 
-  static User fromSnap(DocumentSnapshot snap) {
+  static Driver fromSnap(DocumentSnapshot snap) {
     var snapshot;
 
     if (snap.toString().length > 0) {
       snapshot = snap.data() as Map<String, dynamic>;
 
-      return User(
+      return Driver(
         uid: snapshot['uid'], // Add the 'uid' named parameter here
         displayName: snapshot['displayName'],
         phoneNumber: snapshot['phoneNumber'],
@@ -63,7 +63,7 @@ class User {
       );
     }
 
-    return User(
+    return Driver(
         uid: 'uid',
         displayName: 'displayName',
         phoneNumber: 'phoneNumber',

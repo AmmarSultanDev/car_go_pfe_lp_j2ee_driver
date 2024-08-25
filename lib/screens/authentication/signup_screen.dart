@@ -3,14 +3,10 @@
 import 'dart:typed_data';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/providers/user_provider.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/authentication/signin_screen.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/screens/dashboard.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -95,14 +91,6 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   registerNewDriver() async {
-    if (!context.mounted) return;
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) =>
-          const LoadingDialog(messageText: 'Creating account...'),
-    );
-
     String res = await AuthMethods().signupUser(
       email: _emailController.text.trim(),
       password: _passwordController.text.trim(),
@@ -112,31 +100,12 @@ class _SignupScreenState extends State<SignupScreen> {
       vehiculeNumber: _vehicleNumberController.text.trim(),
       vehiculeModel: _vehicleModelController.text.trim(),
       vehiculeColor: _vehicleColorController.text.trim(),
+      context: context,
     );
 
     if (res != 'Success') {
       if (!context.mounted) return;
-      Navigator.pop(context);
       commonMethods.displaySnackBar(res, context);
-    } else {
-      if (!context.mounted) return;
-      await Provider.of<UserProvider>(context, listen: false).refreshUser();
-
-      Navigator.pop(context);
-      // commonMethods.displaySnackBar('Account created successfully!', context);
-      // Navigate to home screen
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const Dashboard(),
-        ),
-      );
-    }
-  }
-
-  askForPermission() async {
-    status = await Permission.photos.status;
-    if (status == PermissionStatus.denied) {
-      await Permission.photos.request();
     }
   }
 
@@ -148,7 +117,7 @@ class _SignupScreenState extends State<SignupScreen> {
       builder: (context) => LoadingDialog(messageText: 'Loading image...'),
     );
 
-    await askForPermission();
+    await commonMethods.askForPhotosPermission();
 
     // Run the image picker operation
     Uint8List? im = await commonMethods.pickImage(ImageSource.gallery);

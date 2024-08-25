@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
+import 'package:permission_handler/permission_handler.dart';
 
 class CommonMethods {
   const CommonMethods();
@@ -28,6 +29,20 @@ class CommonMethods {
           duration: const Duration(seconds: 3),
         ),
       );
+    }
+  }
+
+  askForLocationPermission() async {
+    if (await Permission.locationWhenInUse.isDenied ||
+        await Permission.locationWhenInUse.status.isGranted != true) {
+      await Permission.location.request();
+    }
+  }
+
+  askForPhotosPermission() async {
+    if (await Permission.photos.isDenied ||
+        await Permission.photos.status.isGranted != true) {
+      await Permission.photos.request();
     }
   }
 
