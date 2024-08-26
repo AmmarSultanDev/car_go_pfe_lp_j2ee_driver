@@ -114,7 +114,7 @@ class _SignupScreenState extends State<SignupScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => LoadingDialog(messageText: 'Loading image...'),
+      builder: (context) => const LoadingDialog(messageText: 'Loading image...'),
     );
 
     await commonMethods.askForPhotosPermission();
@@ -294,7 +294,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             onPressed: () {
                               Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                  builder: (context) => SigninScreen(),
+                                  builder: (context) => const SigninScreen(),
                                 ),
                               );
                             },

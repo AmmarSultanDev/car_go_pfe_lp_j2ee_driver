@@ -96,7 +96,124 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isDismissible: false,
+                    builder: (BuildContext context) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 15,
+                              spreadRadius: 0.5,
+                              offset: Offset(0.7, 0.7),
+                            ),
+                          ],
+                        ),
+                        height: 221,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 18,
+                          ),
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 12),
+                              Text(
+                                (!isDriverAvailable)
+                                    ? 'GO ONLINE'
+                                    : 'GO OFFLINE',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium!
+                                    .copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 24),
+                              Text(
+                                (!isDriverAvailable)
+                                    ? 'You are about to become available to receive trip requests from passengers'
+                                    : 'You are about to become unavailable to receive trip requests from passengers',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                      color: Theme.of(context).hintColor,
+                                    ),
+                              ),
+                              const SizedBox(height: 24),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        if (mounted) Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        'Cancel',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        if (!isDriverAvailable) {
+                                          // TODO: go online
+                                          // TODO: get driver location updates
+
+                                          //close the bottom sheet
+                                          if (mounted) Navigator.pop(context);
+                                          setState(() {
+                                            driverStatusColor = Colors.red;
+                                            driverStatusText = 'Go Offline';
+                                            isDriverAvailable = true;
+                                          });
+                                        } else {
+                                          // go offline
+                                          if (mounted) Navigator.pop(context);
+
+                                          setState(() {
+                                            driverStatusColor = Colors.green;
+                                            driverStatusText = 'Go Online';
+                                            isDriverAvailable = false;
+                                          });
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            (driverStatusText == 'Go Online')
+                                                ? Colors.green
+                                                : Colors.red,
+                                      ),
+                                      child: Text(
+                                        'Confirm',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: driverStatusColor,
                   shape: RoundedRectangleBorder(

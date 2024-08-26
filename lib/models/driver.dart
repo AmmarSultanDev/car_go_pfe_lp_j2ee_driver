@@ -45,9 +45,9 @@ class Driver {
       };
 
   static Driver fromSnap(DocumentSnapshot snap) {
-    var snapshot;
+    Map<String, dynamic> snapshot;
 
-    if (snap.toString().length > 0) {
+    if (snap.toString().isNotEmpty) {
       snapshot = snap.data() as Map<String, dynamic>;
 
       return Driver(
