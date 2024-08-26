@@ -1,5 +1,9 @@
+import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
@@ -71,6 +75,38 @@ class CommonMethods {
       if (image != null) {
         return img.encodePng(image);
       }
+    }
+  }
+
+  goOnline() async {
+    bool initialized = await Geofire.initialize('onlineDrivers');
+    if (initialized) {
+      isGeofireInitialized = true;
+    }
+  }
+
+  goOfflinePermanently(BuildContext ctx) async {
+    try {
+      showDialog(
+          context: ctx,
+          builder: (ctx) =>
+              const LoadingDialog(messageText: 'Going offline...'));
+
+      if (homeTabPageStreamSubscription != null) {
+        await homeTabPageStreamSubscription!.cancel();
+        homeTabPageStreamSubscription = null;
+      }
+
+      if (isGeofireInitialized) {
+        User? currentUser = FirebaseAuth.instance.currentUser;
+        if (currentUser != null) {
+          await Geofire.removeLocation(currentUser.uid);
+        }
+      }
+    } catch (e) {
+      if (ctx.mounted) displaySnackBar('Error: $e', ctx);
+    } finally {
+      if (ctx.mounted) Navigator.of(ctx).pop();
     }
   }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/push_notification/push_notification_system.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -28,9 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Color driverStatusColor = Colors.green;
   String driverStatusText = 'Go Online';
   bool isDriverAvailable = false;
+
+  Color driverStatusColor = Colors.green;
 
   DatabaseReference onlineDriversRef =
       FirebaseDatabase.instance.ref().child('onlineDrivers');
@@ -44,6 +46,11 @@ class _HomeScreenState extends State<HomeScreen> {
         isDriverAvailable = true;
       });
     }
+
+    setState(() {
+      driverStatusColor = isDriverAvailable ? Colors.red : Colors.green;
+      driverStatusText = isDriverAvailable ? 'Go Offline' : 'Go Online';
+    });
   }
 
   void updateMapTheme(GoogleMapController controller, BuildContext context) {
@@ -84,10 +91,6 @@ class _HomeScreenState extends State<HomeScreen> {
         .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
   }
 
-  goOnline() async {
-    await Geofire.initialize('onlineDrivers');
-  }
-
   setAndGetLocationUpdates() {
     homeTabPageStreamSubscription =
         Geolocator.getPositionStream().listen((Position position) {
@@ -119,7 +122,18 @@ class _HomeScreenState extends State<HomeScreen> {
     await homeTabPageStreamSubscription!.cancel();
     homeTabPageStreamSubscription = null;
 
-    await Geofire.removeLocation(_auth.currentUser!.uid);
+    bool? geofireRemoveLocationWithSuccess =
+        await Geofire.removeLocation(_auth.currentUser!.uid);
+
+    print(geofireRemoveLocationWithSuccess);
+
+    if (geofireRemoveLocationWithSuccess == false ||
+        geofireRemoveLocationWithSuccess == null) {
+      await onlineDriversRef.child(_auth.currentUser!.uid).remove();
+      isGeofireInitialized = false;
+    } else {
+      isGeofireInitialized = false;
+    }
   }
 
   initializePushNotificationSystem() {
@@ -158,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
 
-        // go online offline conatiner
+        // go online offline container
         Positioned(
           top: 61,
           left: 0,
@@ -198,7 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               const SizedBox(height: 12),
                               Text(
-                                (!isDriverAvailable)
+                                (isDriverAvailable == false)
                                     ? 'GO ONLINE'
                                     : 'GO OFFLINE',
                                 textAlign: TextAlign.center,
@@ -209,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               const SizedBox(height: 24),
                               Text(
-                                (!isDriverAvailable)
+                                (isDriverAvailable == false)
                                     ? 'You are about to become available to receive trip requests from passengers'
                                     : 'You are about to become unavailable to receive trip requests from passengers',
                                 textAlign: TextAlign.center,
@@ -240,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Expanded(
                                     child: ElevatedButton(
                                       onPressed: () async {
-                                        if (!isDriverAvailable) {
+                                        if (isDriverAvailable == false) {
                                           //close the bottom sheet
                                           if (mounted) Navigator.pop(context);
 
@@ -251,7 +265,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           });
 
                                           // TODO: go online
-                                          await goOnline();
+                                          await const CommonMethods()
+                                              .goOnline();
 
                                           // TODO: get driver location updates
                                           setAndGetLocationUpdates();

@@ -2,6 +2,7 @@
 
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
 import 'package:flutter/material.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -12,6 +13,8 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   signout() async {
+    await const CommonMethods().goOfflinePermanently(context);
+
     await AuthMethods().signoutUser();
   }
 
