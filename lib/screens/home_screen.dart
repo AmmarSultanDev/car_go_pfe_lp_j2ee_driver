@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -70,17 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   goOnline() async {
-    // drivers that are ready for trip requests
-    Geofire.initialize('onlineDrivers');
-
-    Geofire.setLocation(
-      _auth.currentUser!.uid,
-      currentPositionOfDriver!.latitude,
-      currentPositionOfDriver!.longitude,
-    );
-
-    await FirestoreMethods().updateDriverAvailabilityStatus(
-        FirebaseAuth.instance.currentUser!.uid, true);
+    await Geofire.initialize('onlineDrivers');
   }
 
   setAndGetLocationUpdates() {
@@ -96,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
         );
 
         LatLng positionOfDriverInLatLng =
-            LatLng(position!.latitude, position!.longitude);
+            LatLng(position.latitude, position.longitude);
 
         controllerGoogleMap!.animateCamera(
           CameraUpdate.newCameraPosition(
@@ -108,6 +97,13 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
     });
+  }
+
+  goOffline() async {
+    await homeTabPageStreamSubscription!.cancel();
+    homeTabPageStreamSubscription = null;
+
+    await Geofire.removeLocation(_auth.currentUser!.uid);
   }
 
   @override
@@ -214,20 +210,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: () async {
                                         if (!isDriverAvailable) {
-                                          // TODO: go online
-                                          goOnline();
-                                          // TODO: get driver location updates
-                                          setAndGetLocationUpdates();
-
                                           //close the bottom sheet
                                           if (mounted) Navigator.pop(context);
+
                                           setState(() {
                                             driverStatusColor = Colors.red;
                                             driverStatusText = 'Go Offline';
                                             isDriverAvailable = true;
                                           });
+
+                                          // TODO: go online
+                                          await goOnline();
+
+                                          // TODO: get driver location updates
+                                          setAndGetLocationUpdates();
                                         } else {
                                           // go offline
 
@@ -238,6 +236,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             driverStatusText = 'Go Online';
                                             isDriverAvailable = false;
                                           });
+
+                                          await goOffline();
                                         }
                                       },
                                       style: ElevatedButton.styleFrom(
