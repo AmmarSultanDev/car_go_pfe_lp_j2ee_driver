@@ -6,6 +6,7 @@ class Driver {
   final String phoneNumber;
   final String email;
   bool isBlocked = false;
+  bool availability = false;
   String? photoUrl;
   final String vehiculeNumber;
   final String vehiculeModel;
@@ -20,6 +21,7 @@ class Driver {
     required this.vehiculeModel,
     required this.vehiculeColor,
     this.isBlocked = false,
+    this.availability = false,
     this.photoUrl,
   });
 
@@ -38,13 +40,14 @@ class Driver {
         'phoneNumber': phoneNumber,
         'email': email,
         'isBlocked': isBlocked,
+        'availability': availability,
         'photoUrl': photoUrl,
         'vehiculeNumber': vehiculeNumber,
         'vehiculeModel': vehiculeModel,
         'vehiculeColor': vehiculeColor,
       };
 
-  static Driver fromSnap(DocumentSnapshot snap) {
+  static Driver? fromSnap(DocumentSnapshot snap) {
     Map<String, dynamic> snapshot;
 
     if (snap.toString().isNotEmpty) {
@@ -56,20 +59,12 @@ class Driver {
         phoneNumber: snapshot['phoneNumber'],
         email: snapshot['email'],
         isBlocked: snapshot['isBlocked'],
+        availability: snapshot['availability'],
         photoUrl: snapshot['photoUrl'],
         vehiculeNumber: snapshot['vehiculeNumber'],
         vehiculeModel: snapshot['vehiculeModel'],
         vehiculeColor: snapshot['vehiculeColor'],
       );
     }
-
-    return Driver(
-        uid: 'uid',
-        displayName: 'displayName',
-        phoneNumber: 'phoneNumber',
-        email: 'email',
-        vehiculeNumber: 'vehiculeNumber',
-        vehiculeModel: 'vehiculeModel',
-        vehiculeColor: 'vehiculeColor');
   }
 }

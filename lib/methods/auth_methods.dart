@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:car_go_pfe_lp_j2ee_driver/methods/storage_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart' as model;
-import 'package:car_go_pfe_lp_j2ee_driver/providers/user_provider.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/providers/driver_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +12,7 @@ class AuthMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<model.Driver> getUserDetails() async {
+  Future<model.Driver?> getUserDetails() async {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       DocumentSnapshot snap =
@@ -84,12 +84,12 @@ class AuthMethods {
               .doc(userCredential.user!.uid)
               .get();
 
-          model.Driver newUserFromFirestore =
+          model.Driver? newUserFromFirestore =
               model.Driver.fromSnap(newUserSnap);
 
           if (context.mounted) {
-            Provider.of<UserProvider>(context, listen: false).setUser =
-                newUserFromFirestore;
+            Provider.of<DriverProvider>(context, listen: false).setUser =
+                newUserFromFirestore!;
 
             res = 'Success';
             return res;
@@ -123,8 +123,8 @@ class AuthMethods {
               .collection('drivers')
               .doc(userCredential.user!.uid)
               .get();
-          model.Driver user = model.Driver.fromSnap(snap);
-          if (user.isBlocked == true) {
+          model.Driver? user = model.Driver.fromSnap(snap);
+          if (user?.isBlocked == true) {
             await _auth.signOut();
             res = 'Your account has been blocked';
           } else {

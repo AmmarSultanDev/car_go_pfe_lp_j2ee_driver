@@ -1,6 +1,6 @@
 import 'package:car_go_pfe_lp_j2ee_driver/firebase_options.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/providers/user_provider.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/providers/driver_provider.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/resources/app_colors.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/authentication/signin_screen.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/blocked_screen.dart';
@@ -51,7 +51,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => DriverProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(
@@ -131,8 +131,8 @@ class MainApp extends StatelessWidget {
                       model.Driver? user =
                           model.Driver.fromSnap(snapshot.data!);
 
-                      Provider.of<UserProvider>(context, listen: false)
-                          .setUser = user;
+                      Provider.of<DriverProvider>(context, listen: false)
+                          .setUser = user!;
 
                       return FutureBuilder(
                         future:

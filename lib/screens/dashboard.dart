@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart' as model;
-import 'package:car_go_pfe_lp_j2ee_driver/providers/user_provider.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/providers/driver_provider.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/earning_screen.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/home_screen.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/profile_screen.dart';
@@ -32,7 +32,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _userFuture =
-        Provider.of<UserProvider>(context, listen: false).refreshUser();
+        Provider.of<DriverProvider>(context, listen: false).refreshUser();
 
     tabController = TabController(length: 4, vsync: this);
     print(_userFuture.toString());

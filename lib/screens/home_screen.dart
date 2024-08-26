@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -20,7 +23,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   GoogleMapController? controllerGoogleMap;
 
-  Position? currentPositionOfUser;
+  Position? currentPositionOfDriver;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Color driverStatusColor = Colors.green;
   String driverStatusText = 'Go Online';
@@ -50,10 +55,10 @@ class _HomeScreenState extends State<HomeScreen> {
     Position positionOfUser = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.bestForNavigation,
     );
-    currentPositionOfUser = positionOfUser;
+    currentPositionOfDriver = positionOfUser;
 
     LatLng positionOfUserInLatLng = LatLng(
-        currentPositionOfUser!.latitude, currentPositionOfUser!.longitude);
+        currentPositionOfDriver!.latitude, currentPositionOfDriver!.longitude);
 
     CameraPosition cameraPosition = CameraPosition(
       target: positionOfUserInLatLng,
@@ -62,6 +67,47 @@ class _HomeScreenState extends State<HomeScreen> {
 
     controllerGoogleMap!
         .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+  }
+
+  goOnline() async {
+    // drivers that are ready for trip requests
+    Geofire.initialize('onlineDrivers');
+
+    Geofire.setLocation(
+      _auth.currentUser!.uid,
+      currentPositionOfDriver!.latitude,
+      currentPositionOfDriver!.longitude,
+    );
+
+    await FirestoreMethods().updateDriverAvailabilityStatus(
+        FirebaseAuth.instance.currentUser!.uid, true);
+  }
+
+  setAndGetLocationUpdates() {
+    homeTabPageStreamSubscription =
+        Geolocator.getPositionStream().listen((Position position) {
+      currentPositionOfDriver = position;
+
+      if (isDriverAvailable) {
+        Geofire.setLocation(
+          _auth.currentUser!.uid,
+          currentPositionOfDriver!.latitude,
+          currentPositionOfDriver!.longitude,
+        );
+      }
+    });
+
+    LatLng positionOfDriverInLatLng = LatLng(
+        currentPositionOfDriver!.latitude, currentPositionOfDriver!.longitude);
+
+    controllerGoogleMap!.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: positionOfDriverInLatLng,
+          zoom: 14.4746,
+        ),
+      ),
+    );
   }
 
   @override
@@ -171,7 +217,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       onPressed: () {
                                         if (!isDriverAvailable) {
                                           // TODO: go online
+                                          goOnline();
                                           // TODO: get driver location updates
+                                          setAndGetLocationUpdates();
 
                                           //close the bottom sheet
                                           if (mounted) Navigator.pop(context);
