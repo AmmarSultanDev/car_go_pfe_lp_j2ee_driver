@@ -94,20 +94,20 @@ class _HomeScreenState extends State<HomeScreen> {
           currentPositionOfDriver!.latitude,
           currentPositionOfDriver!.longitude,
         );
+
+        LatLng positionOfDriverInLatLng =
+            LatLng(position!.latitude, position!.longitude);
+
+        controllerGoogleMap!.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: positionOfDriverInLatLng,
+              zoom: 14.4746,
+            ),
+          ),
+        );
       }
     });
-
-    LatLng positionOfDriverInLatLng = LatLng(
-        currentPositionOfDriver!.latitude, currentPositionOfDriver!.longitude);
-
-    controllerGoogleMap!.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: positionOfDriverInLatLng,
-          zoom: 14.4746,
-        ),
-      ),
-    );
   }
 
   @override
@@ -230,6 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           });
                                         } else {
                                           // go offline
+
                                           if (mounted) Navigator.pop(context);
 
                                           setState(() {
