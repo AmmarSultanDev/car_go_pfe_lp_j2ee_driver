@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
@@ -29,6 +30,20 @@ class _HomeScreenState extends State<HomeScreen> {
   Color driverStatusColor = Colors.green;
   String driverStatusText = 'Go Online';
   bool isDriverAvailable = false;
+
+  DatabaseReference onlineDriversRef =
+      FirebaseDatabase.instance.ref().child('onlineDrivers');
+
+  void getDriverAvailability() async {
+    DatabaseEvent event =
+        await onlineDriversRef.child(_auth.currentUser!.uid).once();
+    DataSnapshot snapshot = event.snapshot;
+    if (snapshot.value != null) {
+      setState(() {
+        isDriverAvailable = true;
+      });
+    }
+  }
 
   void updateMapTheme(GoogleMapController controller, BuildContext context) {
     String mapStylePath = Theme.of(context).brightness == Brightness.dark
@@ -104,6 +119,13 @@ class _HomeScreenState extends State<HomeScreen> {
     homeTabPageStreamSubscription = null;
 
     await Geofire.removeLocation(_auth.currentUser!.uid);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDriverAvailability();
   }
 
   @override
