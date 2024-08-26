@@ -46,6 +46,13 @@ class CommonMethods {
     }
   }
 
+  askForNotificationPermission() async {
+    if (await Permission.notification.isDenied ||
+        await Permission.notification.status.isGranted != true) {
+      await Permission.notification.request();
+    }
+  }
+
   pickImage(ImageSource source) async {
     final ImagePicker imagePicker = ImagePicker();
     XFile? file = await imagePicker.pickImage(source: source);
