@@ -125,8 +125,6 @@ class _HomeScreenState extends State<HomeScreen> {
     bool? geofireRemoveLocationWithSuccess =
         await Geofire.removeLocation(_auth.currentUser!.uid);
 
-    print(geofireRemoveLocationWithSuccess);
-
     if (geofireRemoveLocationWithSuccess == false ||
         geofireRemoveLocationWithSuccess == null) {
       await onlineDriversRef.child(_auth.currentUser!.uid).remove();
@@ -139,11 +137,11 @@ class _HomeScreenState extends State<HomeScreen> {
   initializePushNotificationSystem() {
     PushNotificationSystem pushNotificationSystem = PushNotificationSystem();
     pushNotificationSystem.generateDeviceRegistrationToken();
+    pushNotificationSystem.startListeningForNewNotifications();
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getDriverAvailability();
     initializePushNotificationSystem();
@@ -264,15 +262,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                             isDriverAvailable = true;
                                           });
 
-                                          // TODO: go online
                                           await const CommonMethods()
                                               .goOnline();
 
-                                          // TODO: get driver location updates
                                           setAndGetLocationUpdates();
                                         } else {
-                                          // go offline
-
                                           if (mounted) Navigator.pop(context);
 
                                           setState(() {

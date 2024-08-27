@@ -62,5 +62,6 @@ class Driver {
         vehiculeColor: snapshot['vehiculeColor'],
       );
     }
+    return null;
   }
 }

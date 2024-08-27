@@ -1,9 +1,7 @@
 import 'dart:async';
 
-import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter_geofire/flutter_geofire.dart';
 
 String googleMapKey = 'AIzaSyBtgO69A3xicdorydolvLf4CfEG91LAdIM';
 // for dev purpose we're getting the location of google plex
