@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/push_notification/push_notification_system.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -11,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,7 +19,11 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final Completer<GoogleMapController> googleMapCompleterController =
       Completer<GoogleMapController>();
 
@@ -29,29 +33,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  String driverStatusText = 'Go Online';
   bool isDriverAvailable = false;
-
+  String driverStatusText = 'Go Online';
   Color driverStatusColor = Colors.green;
 
   DatabaseReference onlineDriversRef =
       FirebaseDatabase.instance.ref().child('onlineDrivers');
-
-  void getDriverAvailability() async {
-    DatabaseEvent event =
-        await onlineDriversRef.child(_auth.currentUser!.uid).once();
-    DataSnapshot snapshot = event.snapshot;
-    if (snapshot.value != null) {
-      setState(() {
-        isDriverAvailable = true;
-      });
-    }
-
-    setState(() {
-      driverStatusColor = isDriverAvailable ? Colors.red : Colors.green;
-      driverStatusText = isDriverAvailable ? 'Go Offline' : 'Go Online';
-    });
-  }
 
   void updateMapTheme(GoogleMapController controller, BuildContext context) {
     String mapStylePath = Theme.of(context).brightness == Brightness.dark
@@ -118,6 +105,26 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  // Load driver's status
+  Future<bool> loadDriverStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isDriverOnline') ?? false;
+  }
+
+  // Save driver's status
+  Future<void> saveDriverStatus(bool isOnline) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDriverOnline', isOnline);
+  }
+
+  goOnline() async {
+    bool initialized = await Geofire.initialize('onlineDrivers');
+    if (initialized) {
+      isGeofireInitialized = true;
+    }
+    await saveDriverStatus(true);
+  }
+
   goOffline() async {
     await homeTabPageStreamSubscription!.cancel();
     homeTabPageStreamSubscription = null;
@@ -132,6 +139,8 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       isGeofireInitialized = false;
     }
+
+    await saveDriverStatus(false);
   }
 
   initializePushNotificationSystem() {
@@ -143,12 +152,28 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    getDriverAvailability();
+    loadDriverStatus().then((isOnline) {
+      if (isOnline) {
+        setState(() {
+          driverStatusColor = Colors.red;
+          driverStatusText = 'Go Offline';
+          isDriverAvailable = true;
+        });
+      } else {
+        setState(() {
+          driverStatusColor = Colors.green;
+          driverStatusText = 'Go Online';
+          isDriverAvailable = false;
+        });
+      }
+    });
     initializePushNotificationSystem();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Stack(
       children: [
         GoogleMap(
@@ -210,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               const SizedBox(height: 12),
                               Text(
-                                (isDriverAvailable == false)
+                                (!isDriverAvailable)
                                     ? 'GO ONLINE'
                                     : 'GO OFFLINE',
                                 textAlign: TextAlign.center,
@@ -221,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               const SizedBox(height: 24),
                               Text(
-                                (isDriverAvailable == false)
+                                (!isDriverAvailable)
                                     ? 'You are about to become available to receive trip requests from passengers'
                                     : 'You are about to become unavailable to receive trip requests from passengers',
                                 textAlign: TextAlign.center,
@@ -252,7 +277,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Expanded(
                                     child: ElevatedButton(
                                       onPressed: () async {
-                                        if (isDriverAvailable == false) {
+                                        if (!isDriverAvailable) {
                                           //close the bottom sheet
                                           if (mounted) Navigator.pop(context);
 
@@ -262,8 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             isDriverAvailable = true;
                                           });
 
-                                          await const CommonMethods()
-                                              .goOnline();
+                                          await goOnline();
 
                                           setAndGetLocationUpdates();
                                         } else {

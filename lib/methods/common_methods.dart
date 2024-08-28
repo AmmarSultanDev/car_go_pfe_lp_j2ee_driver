@@ -78,13 +78,6 @@ class CommonMethods {
     }
   }
 
-  goOnline() async {
-    bool initialized = await Geofire.initialize('onlineDrivers');
-    if (initialized) {
-      isGeofireInitialized = true;
-    }
-  }
-
   goOfflinePermanently(BuildContext ctx) async {
     try {
       showDialog(
