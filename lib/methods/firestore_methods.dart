@@ -94,8 +94,10 @@ class FirestoreMethods {
       );
       tripDetails.dropOffAddress = data?['dropOffAddress'] ?? '';
 
-      tripDetails.passengerDisplayName = data?['userInfo']['displayName'] ?? '';
-      tripDetails.passengerPhoneNumber = data?['userInfo']['phoneNumber'] ?? '';
+      tripDetails.passengerDisplayName =
+          data?['passengerInfo']['displayName'] ?? '';
+      tripDetails.passengerPhoneNumber =
+          data?['passengerInfo']['phoneNumber'] ?? '';
 
       return tripDetails;
     }

@@ -25,6 +25,7 @@ class _NotificationDialogState extends State<NotificationDialog> {
             color: Theme.of(context).canvasColor,
             borderRadius: BorderRadius.circular(4)),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(
               height: 30,
@@ -38,10 +39,10 @@ class _NotificationDialogState extends State<NotificationDialog> {
             ),
             Text(
               'New Trip Request',
-              style: DefaultTextStyle.of(context).style.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Theme.of(context).colorScheme.onSurface),
             ),
             const SizedBox(
               height: 20,
@@ -57,13 +58,14 @@ class _NotificationDialogState extends State<NotificationDialog> {
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   // pick up
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset(
-                        'assets/images/pin_map_start.png',
+                        'assets/images/pin_map_start_position.png',
                         height: 16,
                         width: 16,
                       ),
@@ -130,7 +132,11 @@ class _NotificationDialogState extends State<NotificationDialog> {
                       onPressed: () {},
                       style:
                           ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                      child: const Text('Decline'),
+                      child: Text(
+                        'Decline',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface),
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -141,7 +147,11 @@ class _NotificationDialogState extends State<NotificationDialog> {
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green),
-                      child: const Text('Accept'),
+                      child: Text(
+                        'Accept',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface),
+                      ),
                     ),
                   ),
                 ],
