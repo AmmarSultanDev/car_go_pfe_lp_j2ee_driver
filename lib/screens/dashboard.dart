@@ -17,6 +17,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   Future<model.Driver?>? _userFuture;
+  model.Driver? user;
 
   TabController? tabController;
   int selectedIndex = 0;
@@ -30,8 +31,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
 
   getUserFuture() async {
     try {
-      _userFuture = (await Provider.of<DriverProvider>(context, listen: false)
-          .refreshUser()) as Future<model.Driver?>?;
+      _userFuture =
+          Provider.of<DriverProvider>(context, listen: false).refreshUser();
+      user = await _userFuture;
     } catch (e) {
       print('Error refreshing user: $e');
     }
@@ -42,6 +44,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     super.initState();
 
     tabController = TabController(length: 4, vsync: this);
+    getUserFuture();
   }
 
   @override
@@ -62,7 +65,6 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            final model.Driver? user = snapshot.data;
             if (user == null) {
               return const Center(
                   child: Text('No user data found')); // Handle null user here

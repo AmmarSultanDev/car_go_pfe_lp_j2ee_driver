@@ -73,17 +73,16 @@ class AuthMethods {
               .doc(userCredential.user!.uid)
               .set(user.toJson());
 
-          DocumentSnapshot newUserSnap = await _firestore
-              .collection('drivers')
-              .doc(userCredential.user!.uid)
-              .get();
+          // DocumentSnapshot newUserSnap = await _firestore
+          //     .collection('drivers')
+          //     .doc(userCredential.user!.uid)
+          //     .get();
 
-          model.Driver? newUserFromFirestore =
-              model.Driver.fromSnap(newUserSnap);
+          // model.Driver? newUserFromFirestore =
+          //     model.Driver.fromSnap(newUserSnap);
 
           if (context.mounted) {
-            Provider.of<DriverProvider>(context, listen: false).setUser =
-                newUserFromFirestore!;
+            Provider.of<DriverProvider>(context, listen: false).setUser = user;
 
             res = 'Success';
             return res;

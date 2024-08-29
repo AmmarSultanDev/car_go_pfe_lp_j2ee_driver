@@ -260,6 +260,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       TextField(
                         controller: _vehicleNumberController,
                         keyboardType: TextInputType.text,
+                        textDirection: TextDirection.rtl,
+                        textAlign: TextAlign.left,
                         decoration: const InputDecoration(
                           labelText: 'Vehicle number',
                           hintText: 'Enter your vehicle number',
