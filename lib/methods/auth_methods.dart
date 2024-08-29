@@ -23,14 +23,7 @@ class AuthMethods {
       }
     }
 
-    return model.Driver(
-        uid: 'uid',
-        displayName: '',
-        phoneNumber: 'phoneNumber',
-        email: 'email',
-        vehiculeNumber: 'vehiculeNumber',
-        vehiculeModel: 'vehiculeModel',
-        vehiculeColor: 'vehiculeColor');
+    return null;
   }
 
   Future<String> signupUser({
