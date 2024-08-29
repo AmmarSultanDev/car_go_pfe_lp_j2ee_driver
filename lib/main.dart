@@ -14,7 +14,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart' as model;
 
-var permissionStatusLocation;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
