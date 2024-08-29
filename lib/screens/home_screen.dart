@@ -146,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen>
   initializePushNotificationSystem() {
     PushNotificationSystem pushNotificationSystem = PushNotificationSystem();
     pushNotificationSystem.generateDeviceRegistrationToken();
-    pushNotificationSystem.startListeningForNewNotifications();
+    pushNotificationSystem.startListeningForNewNotifications(context);
   }
 
   @override

@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:car_go_pfe_lp_j2ee_driver/models/trip_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -61,5 +64,47 @@ class FirestoreMethods {
         ],
       });
     }
+  }
+
+  Future<TripDetails?> retrieveTripData(String tripId, context) async {
+    // Retrieve the trip data from the Firestore database
+    DocumentSnapshot snap =
+        await _firestore.collection('tripRequests').doc(tripId).get();
+
+    if (snap.exists) {
+      // play notification sound
+      // playNotificationSound();
+
+      // get the trip details
+
+      TripDetails tripDetails = TripDetails();
+      tripDetails.tripId = tripId;
+
+      tripDetails.pickupLocationCoordinates = LatLng(
+        double.parse(
+            (snap.data() as Map)['pickUpLocationCoordinates']['latitude']),
+        double.parse(
+            (snap.data() as Map)['pickUpLocationCoordinates']['longitude']),
+      );
+      tripDetails.pickupAddress = (snap.data() as Map)['pickUpAddress'];
+
+      tripDetails.destinationLocationCoordinates = LatLng(
+        double.parse(
+            (snap.data() as Map)['dropOffLocationCoordinates']['latitude']),
+        double.parse(
+            (snap.data() as Map)['dropOffLocationCoordinates']['longitude']),
+      );
+
+      tripDetails.dropOffAddress = (snap.data() as Map)['dropOffAddress'];
+
+      tripDetails.passengerDisplayName =
+          (snap.data() as Map)['userInfo']['displayName'];
+
+      tripDetails.passengerPhoneNumber =
+          (snap.data() as Map)['userInfo']['phoneNumber'];
+
+      return tripDetails;
+    }
+    return null;
   }
 }
