@@ -2,6 +2,7 @@ import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/notification_dialog.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class PushNotificationSystem {
@@ -27,7 +28,7 @@ class PushNotificationSystem {
       if (message != null) {
         String tripId = message.data['tripId'];
 
-        retrieveTripData(tripId, context);
+        if (context.mounted) retrieveTripData(tripId, context);
       }
     });
 
@@ -37,7 +38,7 @@ class PushNotificationSystem {
       if (message != null) {
         String tripId = message.data['tripId'];
 
-        retrieveTripData(tripId, context);
+        if (context.mounted) retrieveTripData(tripId, context);
       }
     });
 
@@ -47,7 +48,7 @@ class PushNotificationSystem {
       if (message != null) {
         String tripId = message.data['tripId'];
 
-        retrieveTripData(tripId, context);
+        if (context.mounted) retrieveTripData(tripId, context);
       }
     });
   }
@@ -62,16 +63,20 @@ class PushNotificationSystem {
     var response =
         await FirestoreMethods().retrieveTripDataFromFirebase(tripId);
 
-    print('Response: $response');
+    if (kDebugMode) {
+      print('Response: $response');
+    }
 
     if (context.mounted) Navigator.of(context).pop();
 
     if (response != null) {
-      showDialog(
-          context: context,
-          builder: (context) => NotificationDialog(
-                tripDetails: response,
-              ));
+      if (context.mounted) {
+        showDialog(
+            context: context,
+            builder: (context) => NotificationDialog(
+                  tripDetails: response,
+                ));
+      }
     }
   }
 }

@@ -156,7 +156,10 @@ class _HomeScreenState extends State<HomeScreen>
   initializePushNotificationSystem() async {
     PushNotificationSystem pushNotificationSystem = PushNotificationSystem();
     await pushNotificationSystem.generateDeviceRegistrationToken();
-    await pushNotificationSystem.startListeningForNewNotifications(context);
+    if (context.mounted) {
+      // ignore: use_build_context_synchronously
+      await pushNotificationSystem.startListeningForNewNotifications(context);
+    }
   }
 
   @override
@@ -164,7 +167,6 @@ class _HomeScreenState extends State<HomeScreen>
     checkDriverAvailabilityOnServer();
 
     loadDriverStatus().then((isOnline) {
-      print(isDriverAvailableServerSide);
       if (isOnline || isDriverAvailableServerSide) {
         setState(() {
           driverStatusColor = Colors.red;

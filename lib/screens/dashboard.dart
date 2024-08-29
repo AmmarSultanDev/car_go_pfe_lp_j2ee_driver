@@ -35,7 +35,6 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
         Provider.of<DriverProvider>(context, listen: false).refreshUser();
 
     tabController = TabController(length: 4, vsync: this);
-    print(_userFuture.toString());
   }
 
   @override
