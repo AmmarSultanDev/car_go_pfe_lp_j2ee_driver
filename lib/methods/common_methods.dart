@@ -80,10 +80,7 @@ class CommonMethods {
 
   goOfflinePermanently(BuildContext ctx) async {
     try {
-      showDialog(
-          context: ctx,
-          builder: (ctx) =>
-              const LoadingDialog(messageText: 'Going offline...'));
+      
 
       if (homeTabPageStreamSubscription != null) {
         await homeTabPageStreamSubscription!.cancel();

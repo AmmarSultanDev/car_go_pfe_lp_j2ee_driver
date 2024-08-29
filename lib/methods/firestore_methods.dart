@@ -12,10 +12,7 @@ class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final user = FirebaseAuth.instance.currentUser;
 
-  setDeviceToken() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-    String? token = await messaging.getToken();
+  setDeviceToken(String token) async {
     String phoneModel = 'unknown';
     String? deviceId = 'unknown';
 
@@ -38,7 +35,28 @@ class FirestoreMethods {
       // Check if the device is already registered
       List<dynamic> devices = doc.get('devices');
       for (var device in devices) {
-        if (device['id'] == deviceId) {
+        if (device['id'] == deviceId && device['token'] == token) {
+          return;
+        } else if (device['id'] == deviceId && device['token'] != token) {
+          // Update the device token in the Firestore database
+          await _firestore.collection('tokens').doc(user!.uid).update({
+            'devices': FieldValue.arrayRemove([
+              {
+                'id': deviceId,
+                'model': phoneModel,
+                'token': device['token'],
+              }
+            ])
+          });
+          await _firestore.collection('tokens').doc(user!.uid).update({
+            'devices': FieldValue.arrayUnion([
+              {
+                'id': deviceId,
+                'model': phoneModel,
+                'token': token,
+              }
+            ])
+          });
           return;
         }
       }

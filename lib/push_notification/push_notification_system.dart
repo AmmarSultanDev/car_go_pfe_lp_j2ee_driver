@@ -8,10 +8,16 @@ class PushNotificationSystem {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
   generateDeviceRegistrationToken() async {
-    await FirestoreMethods().setDeviceToken();
+    String? token = await messaging.getToken();
+    if (token != null) await FirestoreMethods().setDeviceToken(token);
 
     messaging.subscribeToTopic('drivers');
     messaging.subscribeToTopic('users');
+
+    messaging.onTokenRefresh.listen((newToken) {
+      // Save the new token to Firestore
+      FirestoreMethods().setDeviceToken(newToken);
+    });
   }
 
   startListeningForNewNotifications(BuildContext context) async {
