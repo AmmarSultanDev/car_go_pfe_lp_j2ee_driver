@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 
@@ -13,7 +14,13 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   signout() async {
+    showDialog(
+        context: context,
+        builder: (ctx) => const LoadingDialog(messageText: 'Going offline...'));
+
     await const CommonMethods().goOfflinePermanently(context);
+
+    if (mounted) Navigator.of(context).pop();
 
     await AuthMethods().signoutUser();
   }
