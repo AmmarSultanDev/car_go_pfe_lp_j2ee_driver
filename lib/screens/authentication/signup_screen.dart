@@ -28,7 +28,6 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _vehicleModelController = TextEditingController();
   final TextEditingController _vehicleColorController = TextEditingController();
   Uint8List? _image;
-  var status;
 
   CommonMethods commonMethods = const CommonMethods();
 

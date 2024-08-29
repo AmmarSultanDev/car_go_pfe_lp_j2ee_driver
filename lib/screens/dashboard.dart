@@ -28,11 +28,18 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     });
   }
 
+  getUserFuture() async {
+    try {
+      _userFuture = (await Provider.of<DriverProvider>(context, listen: false)
+          .refreshUser()) as Future<model.Driver?>?;
+    } catch (e) {
+      print('Error refreshing user: $e');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    _userFuture =
-        Provider.of<DriverProvider>(context, listen: false).refreshUser();
 
     tabController = TabController(length: 4, vsync: this);
   }

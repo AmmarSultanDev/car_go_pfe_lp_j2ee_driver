@@ -1,5 +1,4 @@
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

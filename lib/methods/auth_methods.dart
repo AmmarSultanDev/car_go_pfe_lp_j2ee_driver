@@ -1,10 +1,9 @@
-import 'dart:typed_data';
-
 import 'package:car_go_pfe_lp_j2ee_driver/methods/storage_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart' as model;
 import 'package:car_go_pfe_lp_j2ee_driver/providers/driver_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +17,9 @@ class AuthMethods {
       DocumentSnapshot snap =
           await _firestore.collection('drivers').doc(currentUser.uid).get();
       if (snap.exists) {
-        print(snap.toString());
+        if (kDebugMode) {
+          print(snap.toString());
+        }
         return model.Driver.fromSnap(snap);
       }
     }
