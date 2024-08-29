@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/push_notification/push_notification_system.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -32,6 +33,8 @@ class _HomeScreenState extends State<HomeScreen>
   Position? currentPositionOfDriver;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  bool isDriverAvailableServerSide = false;
 
   bool isDriverAvailable = false;
   String driverStatusText = 'Go Online';
@@ -117,6 +120,13 @@ class _HomeScreenState extends State<HomeScreen>
     await prefs.setBool('isDriverOnline', isOnline);
   }
 
+  checkDriverAvailabilityOnServer() async {
+    isDriverAvailableServerSide =
+        await FirestoreMethods().getDriverAvailabilityStatus();
+
+    setState(() {});
+  }
+
   goOnline() async {
     bool initialized = await Geofire.initialize('onlineDrivers');
     if (initialized) {
@@ -126,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   goOffline() async {
-    await homeTabPageStreamSubscription!.cancel();
+    await homeTabPageStreamSubscription?.cancel();
     homeTabPageStreamSubscription = null;
 
     bool? geofireRemoveLocationWithSuccess =
@@ -143,17 +153,19 @@ class _HomeScreenState extends State<HomeScreen>
     await saveDriverStatus(false);
   }
 
-  initializePushNotificationSystem() {
+  initializePushNotificationSystem() async {
     PushNotificationSystem pushNotificationSystem = PushNotificationSystem();
-    pushNotificationSystem.generateDeviceRegistrationToken();
-    pushNotificationSystem.startListeningForNewNotifications(context);
+    await pushNotificationSystem.generateDeviceRegistrationToken();
+    await pushNotificationSystem.startListeningForNewNotifications(context);
   }
 
   @override
   void initState() {
-    super.initState();
+    checkDriverAvailabilityOnServer();
+
     loadDriverStatus().then((isOnline) {
-      if (isOnline) {
+      print(isDriverAvailableServerSide);
+      if (isOnline || isDriverAvailableServerSide) {
         setState(() {
           driverStatusColor = Colors.red;
           driverStatusText = 'Go Offline';
@@ -168,6 +180,7 @@ class _HomeScreenState extends State<HomeScreen>
       }
     });
     initializePushNotificationSystem();
+    super.initState();
   }
 
   @override
@@ -276,8 +289,9 @@ class _HomeScreenState extends State<HomeScreen>
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: ElevatedButton(
-                                      onPressed: () async {
+                                      onPressed: () {
                                         if (!isDriverAvailable) {
+                                          goOnline();
                                           //close the bottom sheet
                                           if (mounted) Navigator.pop(context);
 
@@ -287,10 +301,10 @@ class _HomeScreenState extends State<HomeScreen>
                                             isDriverAvailable = true;
                                           });
 
-                                          await goOnline();
-
                                           setAndGetLocationUpdates();
                                         } else {
+                                          goOffline();
+
                                           if (mounted) Navigator.pop(context);
 
                                           setState(() {
@@ -298,8 +312,6 @@ class _HomeScreenState extends State<HomeScreen>
                                             driverStatusText = 'Go Online';
                                             isDriverAvailable = false;
                                           });
-
-                                          await goOffline();
                                         }
                                       },
                                       style: ElevatedButton.styleFrom(

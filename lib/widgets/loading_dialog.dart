@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
-class LoadingDialog extends StatelessWidget {
+class LoadingDialog extends StatefulWidget {
   const LoadingDialog({super.key, required this.messageText});
 
   final String messageText;
 
+  @override
+  State<LoadingDialog> createState() => _LoadingDialogState();
+}
+
+class _LoadingDialogState extends State<LoadingDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -33,7 +38,7 @@ class LoadingDialog extends StatelessWidget {
               const SizedBox(
                 width: 8,
               ),
-              Text(messageText,
+              Text(widget.messageText,
                   style: Theme.of(context).primaryTextTheme.labelLarge),
             ],
           ),

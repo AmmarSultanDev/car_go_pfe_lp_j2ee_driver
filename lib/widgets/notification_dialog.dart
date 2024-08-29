@@ -1,11 +1,16 @@
 import 'package:car_go_pfe_lp_j2ee_driver/models/trip_details.dart';
 import 'package:flutter/material.dart';
 
-class NotificationDialog extends StatelessWidget {
+class NotificationDialog extends StatefulWidget {
   const NotificationDialog({super.key, required this.tripDetails});
 
   final TripDetails tripDetails;
 
+  @override
+  State<NotificationDialog> createState() => _NotificationDialogState();
+}
+
+class _NotificationDialogState extends State<NotificationDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -67,7 +72,7 @@ class NotificationDialog extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          tripDetails.pickupAddress!,
+                          widget.tripDetails.pickupAddress!,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                         ),
@@ -93,7 +98,7 @@ class NotificationDialog extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          tripDetails.dropOffAddress!,
+                          widget.tripDetails.dropOffAddress!,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                         ),

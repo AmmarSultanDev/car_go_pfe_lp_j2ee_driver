@@ -50,10 +50,13 @@ class PushNotificationSystem {
     showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (BuildContext context) => const LoadingDialog(
+        builder: (context) => const LoadingDialog(
               messageText: 'Loading Trip Data...',
             ));
-    var response = await FirestoreMethods().retrieveTripData(tripId, context);
+    var response =
+        await FirestoreMethods().retrieveTripDataFromFirebase(tripId);
+
+    print('Response: $response');
 
     if (context.mounted) Navigator.of(context).pop();
 
