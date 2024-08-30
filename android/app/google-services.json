@@ -6,25 +6,7 @@
     "storage_bucket": "car-go-pfe-lp-j2ee.appspot.com"
   },
   "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:321538158709:android:24f2e18597ff751113083c",
-        "android_client_info": {
-          "package_name": "com.example.car_go"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyA7CggCXPhX5ZWYDnrprh3-5OtnpVLnb6s"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
+    
     {
       "client_info": {
         "mobilesdk_app_id": "1:321538158709:android:ca2e2cc84a8cfe0213083c",
@@ -35,7 +17,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA7CggCXPhX5ZWYDnrprh3-5OtnpVLnb6s"
+          "current_key": "AIzaSyAP7oZR7rZqE5FMOThR2GO4mC6Np1Di77g"
         }
       ],
       "services": {

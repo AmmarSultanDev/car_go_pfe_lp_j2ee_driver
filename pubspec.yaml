@@ -7,28 +7,29 @@ environment:
   sdk: ^3.5.0
 
 dependencies:
-  cloud_firestore: 
+  cloud_firestore:
   connectivity_plus:
-  device_info_plus: 
-  firebase_auth: 
+  device_info_plus:
+  firebase_app_check:
+  firebase_auth:
   firebase_core:
-  firebase_database: ^10.1.0
-  firebase_messaging: 
+  firebase_database:
+  firebase_messaging:
   firebase_storage:
   flutter:
     sdk: flutter
-  flutter_dotenv: 
-  flutter_geofire: ^2.0.0
+  flutter_dotenv:
+  flutter_geofire:
   flutter_image_compress:
   geolocator:
-  google_maps_flutter:
-  image:
-  image_picker:
-  permission_handler:
-  provider:
-  shared_preferences:
-  url_launcher:
-  uuid:
+  google_maps_flutter: null
+  image: null
+  image_picker: null
+  permission_handler: null
+  provider: null
+  shared_preferences: null
+  url_launcher: null
+  uuid: null
 
 dev_dependencies:
   flutter_lints: ^4.0.0
