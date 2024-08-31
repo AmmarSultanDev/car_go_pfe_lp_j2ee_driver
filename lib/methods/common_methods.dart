@@ -1,4 +1,5 @@
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/screens/authentication/signin_screen.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -79,8 +80,6 @@ class CommonMethods {
 
   goOfflinePermanently(BuildContext ctx) async {
     try {
-      
-
       if (homeTabPageStreamSubscription != null) {
         await homeTabPageStreamSubscription!.cancel();
         homeTabPageStreamSubscription = null;
@@ -95,7 +94,13 @@ class CommonMethods {
     } catch (e) {
       if (ctx.mounted) displaySnackBar('Error: $e', ctx);
     } finally {
-      if (ctx.mounted) Navigator.of(ctx).pop();
+      // if (ctx.mounted) {
+      //   Navigator.of(ctx).push(
+      //     MaterialPageRoute(
+      //       builder: (ctx) => const SigninScreen(),
+      //     ),
+      //   );
+      // }
     }
   }
 }

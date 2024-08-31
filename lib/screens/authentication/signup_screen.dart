@@ -114,6 +114,9 @@ class _SignupScreenState extends State<SignupScreen> {
       if (!context.mounted) return;
       commonMethods.displaySnackBar(res, context);
     } else {
+      await commonMethods.askForLocationPermission();
+      await commonMethods.askForNotificationPermission();
+
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const Dashboard(),
