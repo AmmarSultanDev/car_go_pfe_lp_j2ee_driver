@@ -5,6 +5,7 @@ import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/trip_details.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/screens/new_trip_page.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,8 @@ class NotificationDialog extends StatefulWidget {
 
 class _NotificationDialogState extends State<NotificationDialog> {
   String tripRequestStatus = '';
+
+  CommonMethods commonMethods = const CommonMethods();
 
   cancelNotificationDialogAfter20Sec() {
     const oneTickPerSecond = Duration(seconds: 1);
@@ -63,11 +66,23 @@ class _NotificationDialogState extends State<NotificationDialog> {
       if (kDebugMode) {
         print('Request accepted');
       }
+
+      // disable homepage location updates
+      commonMethods.pauseLocationUpdates();
+
+      // go to new trip page
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => NewTripPage(tripDetails: widget.tripDetails),
+          ),
+        );
+      }
     } else {
       if (mounted) {
         Navigator.of(context).pop();
-        const CommonMethods()
-            .displaySnackBar('Request already accepted!', context);
+        commonMethods.displaySnackBar(
+            'Request not available anymore! Good luck next time.', context);
       }
     }
   }

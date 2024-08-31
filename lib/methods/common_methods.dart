@@ -5,9 +5,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_geofire/flutter_geofire.dart';
 
 class CommonMethods {
   const CommonMethods();
@@ -94,5 +97,22 @@ class CommonMethods {
     } catch (e) {
       if (ctx.mounted) displaySnackBar('Error: $e', ctx);
     }
+  }
+
+  pauseLocationUpdates() async {
+    if (homeTabPageStreamSubscription != null) {
+      homeTabPageStreamSubscription!.pause();
+    }
+    // the driver now is busy
+    Geofire.removeLocation(FirebaseAuth.instance.currentUser!.uid);
+  }
+
+  resumeLocationUpdates(Position driverCurrentPosition) async {
+    if (homeTabPageStreamSubscription != null) {
+      homeTabPageStreamSubscription!.resume();
+    }
+    // the driver now is available
+    Geofire.setLocation(FirebaseAuth.instance.currentUser!.uid,
+        driverCurrentPosition.latitude, driverCurrentPosition.longitude);
   }
 }
