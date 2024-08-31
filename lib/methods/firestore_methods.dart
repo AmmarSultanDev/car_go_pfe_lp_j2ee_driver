@@ -122,17 +122,33 @@ class FirestoreMethods {
     return null;
   }
 
-  updateTripRequestStatus(String requestId, String status) async {
+  Future<bool> acceptTripRequestStatus(String requestId) async {
+    //check the current request state
+    DocumentSnapshot snap =
+        await _firestore.collection('tripRequests').doc(requestId).get();
+
+    if (snap.exists) {
+      Map<String, dynamic>? data = snap.data() as Map<String, dynamic>?;
+
+      if (data?['status'] == 'accepted') {
+        return false;
+      }
+    }
+
     try {
       await _firestore
           .collection('tripRequests')
           .doc(requestId)
-          .update({'status': status});
+          .update({'status': 'accepted'});
+
+      return true;
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
+
+    return false;
   }
 
   Future<bool> getDriverAvailabilityStatus() async {

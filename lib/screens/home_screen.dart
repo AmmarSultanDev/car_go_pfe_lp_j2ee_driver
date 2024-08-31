@@ -167,7 +167,11 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     checkDriverAvailabilityOnServer();
+    initializePushNotificationSystem();
+    super.initState();
+  }
 
+  setDriverAvailability() {
     loadDriverStatus().then((isOnline) {
       if (isOnline && isDriverAvailableServerSide) {
         setState(() {
@@ -183,13 +187,13 @@ class _HomeScreenState extends State<HomeScreen>
         });
       }
     });
-    initializePushNotificationSystem();
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+    setDriverAvailability();
 
     return Stack(
       children: [

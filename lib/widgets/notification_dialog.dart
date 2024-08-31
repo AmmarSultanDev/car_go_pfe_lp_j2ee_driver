@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/trip_details.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class NotificationDialog extends StatefulWidget {
@@ -38,6 +41,35 @@ class _NotificationDialogState extends State<NotificationDialog> {
 
   playNotificationSound() {
     audioPlayer.play(AssetSource('sounds/alert_sound.wav'));
+  }
+
+  acceptRequest() async {
+    showDialog(
+        context: context,
+        builder: (context) =>
+            const LoadingDialog(messageText: 'Accepting request...'));
+    audioPlayer.stop();
+    setState(() {
+      tripRequestStatus = 'accepted';
+    });
+    bool requestAnswer = await FirestoreMethods()
+        .acceptTripRequestStatus(widget.tripDetails.tripId!);
+
+    if (mounted) Navigator.of(context).pop();
+
+    if (requestAnswer) {
+      if (mounted) Navigator.of(context).pop();
+      // TODO request accepted
+      if (kDebugMode) {
+        print('Request accepted');
+      }
+    } else {
+      if (mounted) {
+        Navigator.of(context).pop();
+        const CommonMethods()
+            .displaySnackBar('Request already accepted!', context);
+      }
+    }
   }
 
   @override
@@ -184,13 +216,7 @@ class _NotificationDialogState extends State<NotificationDialog> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
-                        audioPlayer.stop();
-                        setState(() {
-                          tripRequestStatus = 'accepted';
-                        });
-                        await FirestoreMethods().updateTripRequestStatus(
-                            widget.tripDetails.tripId!, 'accepted');
-                        if (mounted) Navigator.of(context).pop();
+                        await acceptRequest();
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green),
