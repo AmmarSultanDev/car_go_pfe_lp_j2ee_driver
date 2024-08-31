@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/trip_details.dart';
 import 'package:flutter/material.dart';
@@ -24,18 +25,25 @@ class _NotificationDialogState extends State<NotificationDialog> {
       if (tripRequestStatus == 'accepted') {
         timer.cancel();
         timerDuration = 20;
+        audioPlayer.stop();
       } else if (timerDuration == 0) {
         timer.cancel();
         timerDuration = 20;
+        audioPlayer.stop();
         Navigator.of(context).pop();
       }
     });
+  }
+
+  playNotificationSound() {
+    audioPlayer.play(AssetSource('sounds/alert_sound.wav'));
   }
 
   @override
   void initState() {
     super.initState();
     cancelNotificationDialogAfter20Sec();
+    playNotificationSound();
   }
 
   @override
@@ -157,6 +165,7 @@ class _NotificationDialogState extends State<NotificationDialog> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
+                        audioPlayer.stop();
                         Navigator.of(context).pop();
                       },
                       style:
@@ -173,7 +182,12 @@ class _NotificationDialogState extends State<NotificationDialog> {
                   ),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          tripRequestStatus = 'accepted';
+                        });
+                        audioPlayer.stop();
+                      },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green),
                       child: Text(

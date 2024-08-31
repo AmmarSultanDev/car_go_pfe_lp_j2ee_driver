@@ -7,21 +7,23 @@ environment:
   sdk: ^3.5.0
 
 dependencies:
-  cloud_firestore:
-  connectivity_plus:
-  device_info_plus:
-  firebase_app_check:
-  firebase_auth:
-  firebase_core:
-  firebase_database:
-  firebase_messaging:
-  firebase_storage:
+  
+  audioplayers: ^6.1.0
+  cloud_firestore: null
+  connectivity_plus: null
+  device_info_plus: null
+  firebase_app_check: null
+  firebase_auth: null
+  firebase_core: null
+  firebase_database: null
+  firebase_messaging: null
+  firebase_storage: null
   flutter:
     sdk: flutter
-  flutter_dotenv:
-  flutter_geofire:
-  flutter_image_compress:
-  geolocator:
+  flutter_dotenv: null
+  flutter_geofire: null
+  flutter_image_compress: null
+  geolocator: null
   google_maps_flutter: null
   image: null
   image_picker: null
