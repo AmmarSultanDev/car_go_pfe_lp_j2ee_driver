@@ -63,7 +63,7 @@ class AuthMethods {
             phoneNumber: userphone,
             email: email,
             photoUrl: photoUrl,
-            vehiculeNumber: vehiculeNumber,
+            vehiculePlateNumber: vehiculeNumber,
             vehiculeModel: vehiculeModel,
             vehiculeColor: vehiculeColor,
           );

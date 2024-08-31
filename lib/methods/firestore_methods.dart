@@ -135,17 +135,29 @@ class FirestoreMethods {
       }
     }
 
-    try {
-      await _firestore
-          .collection('tripRequests')
-          .doc(requestId)
-          .update({'status': 'accepted'});
+    // get driver informations
+    DocumentSnapshot driverSnap =
+        await _firestore.collection('drivers').doc(user!.uid).get();
+
+    if (driverSnap.exists) {
+      Map<String, dynamic>? driverData =
+          driverSnap.data() as Map<String, dynamic>?;
+
+      await _firestore.collection('tripRequests').doc(requestId).update({
+        'driverInfo': {
+          'uid': driverData?['uid'] ?? '',
+          'displayName': driverData?['displayName'] ?? '',
+          'phoneNumber': driverData?['phoneNumber'] ?? '',
+          'photoUrl': driverData?['photoUrl'] ?? '',
+          'email': driverData?['email'] ?? '',
+          'vehiculeModel': driverData?['vehiculeModel'] ?? '',
+          'vehiculeColor': driverData?['vehiculeColor'] ?? '',
+          'vehiculePlateNumber': driverData?['vehiculePlateNumber'] ?? '',
+        },
+        'status': 'accepted',
+      });
 
       return true;
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
     }
 
     return false;

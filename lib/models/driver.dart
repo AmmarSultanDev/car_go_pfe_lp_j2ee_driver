@@ -7,7 +7,7 @@ class Driver {
   final String email;
   bool isBlocked = false;
   String? photoUrl;
-  final String vehiculeNumber;
+  final String vehiculePlateNumber;
   final String vehiculeModel;
   final String vehiculeColor;
 
@@ -16,7 +16,7 @@ class Driver {
     required this.displayName,
     required this.phoneNumber,
     required this.email,
-    required this.vehiculeNumber,
+    required this.vehiculePlateNumber,
     required this.vehiculeModel,
     required this.vehiculeColor,
     this.isBlocked = false,
@@ -27,7 +27,7 @@ class Driver {
     required this.displayName,
     required this.phoneNumber,
     required this.email,
-    required this.vehiculeNumber,
+    required this.vehiculePlateNumber,
     required this.vehiculeModel,
     required this.vehiculeColor,
   }) : uid = '';
@@ -39,7 +39,7 @@ class Driver {
         'email': email,
         'isBlocked': isBlocked,
         'photoUrl': photoUrl,
-        'vehiculeNumber': vehiculeNumber,
+        'vehiculePlateNumber': vehiculePlateNumber,
         'vehiculeModel': vehiculeModel,
         'vehiculeColor': vehiculeColor,
       };
@@ -57,7 +57,7 @@ class Driver {
         email: snapshot['email'],
         isBlocked: snapshot['isBlocked'],
         photoUrl: snapshot['photoUrl'],
-        vehiculeNumber: snapshot['vehiculeNumber'],
+        vehiculePlateNumber: snapshot['vehiculePlateNumber'],
         vehiculeModel: snapshot['vehiculeModel'],
         vehiculeColor: snapshot['vehiculeColor'],
       );
