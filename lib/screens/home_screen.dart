@@ -297,11 +297,12 @@ class _HomeScreenState extends State<HomeScreen>
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: () async {
                                         if (!isDriverAvailable) {
-                                          goOnline();
+                                          await goOnline();
                                           //close the bottom sheet
-                                          if (mounted) Navigator.pop(context);
+                                          if (context.mounted)
+                                            Navigator.pop(context);
 
                                           setState(() {
                                             driverStatusColor = Colors.red;

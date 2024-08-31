@@ -93,14 +93,6 @@ class CommonMethods {
       }
     } catch (e) {
       if (ctx.mounted) displaySnackBar('Error: $e', ctx);
-    } finally {
-      // if (ctx.mounted) {
-      //   Navigator.of(ctx).push(
-      //     MaterialPageRoute(
-      //       builder: (ctx) => const SigninScreen(),
-      //     ),
-      //   );
-      // }
     }
   }
 }
