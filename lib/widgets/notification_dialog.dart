@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/trip_details.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +14,30 @@ class NotificationDialog extends StatefulWidget {
 }
 
 class _NotificationDialogState extends State<NotificationDialog> {
+  String tripRequestStatus = '';
+
+  cancelNotificationDialogAfter20Sec() {
+    const oneTickPerSecond = Duration(seconds: 1);
+
+    Timer.periodic(oneTickPerSecond, (timer) {
+      timerDuration -= 1;
+      if (tripRequestStatus == 'accepted') {
+        timer.cancel();
+        timerDuration = 20;
+      } else if (timerDuration == 0) {
+        timer.cancel();
+        timerDuration = 20;
+        Navigator.of(context).pop();
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    cancelNotificationDialogAfter20Sec();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -129,7 +156,9 @@ class _NotificationDialogState extends State<NotificationDialog> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
                       style:
                           ElevatedButton.styleFrom(backgroundColor: Colors.red),
                       child: Text(

@@ -5,6 +5,7 @@ import 'package:car_go_pfe_lp_j2ee_driver/screens/earning_screen.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/home_screen.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/profile_screen.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/trips_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +36,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
           Provider.of<DriverProvider>(context, listen: false).refreshUser();
       user = await _userFuture;
     } catch (e) {
-      print('Error refreshing user: $e');
+      if (kDebugMode) {
+        print('Error refreshing user: $e');
+      }
     }
   }
 

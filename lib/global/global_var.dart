@@ -17,3 +17,5 @@ const CameraPosition casablancaInitialPosition = CameraPosition(
 StreamSubscription<Position>? homeTabPageStreamSubscription;
 
 bool isGeofireInitialized = false;
+
+int timerDuration = 20;
