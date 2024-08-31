@@ -124,7 +124,9 @@ class _HomeScreenState extends State<HomeScreen>
     isDriverAvailableServerSide =
         await FirestoreMethods().getDriverAvailabilityStatus();
 
-    setState(() {});
+    setState(() {
+      isDriverAvailableServerSide = isDriverAvailableServerSide;
+    });
   }
 
   goOnline() async {
@@ -167,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen>
     checkDriverAvailabilityOnServer();
 
     loadDriverStatus().then((isOnline) {
-      if (isOnline || isDriverAvailableServerSide) {
+      if (isOnline && isDriverAvailableServerSide) {
         setState(() {
           driverStatusColor = Colors.red;
           driverStatusText = 'Go Offline';

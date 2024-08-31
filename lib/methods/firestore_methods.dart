@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class FirestoreMethods {
@@ -119,6 +120,19 @@ class FirestoreMethods {
       return tripDetails;
     }
     return null;
+  }
+
+  updateTripRequestStatus(String requestId, String status) async {
+    try {
+      await _firestore
+          .collection('tripRequests')
+          .doc(requestId)
+          .update({'status': status});
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
   }
 
   Future<bool> getDriverAvailabilityStatus() async {

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/trip_details.dart';
 import 'package:flutter/material.dart';
 
@@ -182,11 +183,14 @@ class _NotificationDialogState extends State<NotificationDialog> {
                   ),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        audioPlayer.stop();
                         setState(() {
                           tripRequestStatus = 'accepted';
                         });
-                        audioPlayer.stop();
+                        await FirestoreMethods().updateTripRequestStatus(
+                            widget.tripDetails.tripId!, 'accepted');
+                        if (mounted) Navigator.of(context).pop();
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green),
