@@ -90,9 +90,6 @@ class FirestoreMethods {
         await _firestore.collection('tripRequests').doc(tripId).get();
 
     if (snap.exists) {
-      // play notification sound
-      // playNotificationSound();
-
       // get the trip details
 
       TripDetails tripDetails = TripDetails();

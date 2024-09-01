@@ -1,8 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/screens/authentication/signin_screen.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/models/direction_details.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:geolocator/geolocator.dart';
@@ -10,7 +15,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_geofire/flutter_geofire.dart';
+import 'package:http/http.dart' as http;
 
 class CommonMethods {
   const CommonMethods();
@@ -114,5 +119,63 @@ class CommonMethods {
     // the driver now is available
     Geofire.setLocation(FirebaseAuth.instance.currentUser!.uid,
         driverCurrentPosition.latitude, driverCurrentPosition.longitude);
+  }
+
+  static sendRequestToApi(String apiURL) async {
+    if (kDebugMode) {
+      print(apiURL);
+    }
+    http.Response response = await http.get(Uri.parse(apiURL));
+
+    try {
+      if (response.statusCode == 200) {
+        String dataFromApi = response.body;
+        var dataDecoded = jsonDecode(dataFromApi);
+        if (dataDecoded['status'] == 'REQUEST_DENIED') {
+          return 'use_unrestricted';
+        }
+        return dataDecoded;
+      } else {
+        return 'error';
+      }
+    } catch (e) {
+      return 'error';
+    }
+  }
+
+  static Future<DirectionDetails?> getDirectionDetailsFromApi(
+      LatLng source, LatLng destination) async {
+    String? apiKey = Platform.isIOS
+        ? dotenv.env['GOOGLE_MAPS_API_KEY_IOS']
+        : dotenv.env['GOOGLE_MAPS_API_KEY_ANDROID'];
+    String urlDirectionsApi =
+        'https://maps.googleapis.com/maps/api/directions/json?destination=${destination.latitude},${destination.longitude}&origin=${source.latitude},${source.longitude}&mode=driving&key=$apiKey';
+
+    var response = await sendRequestToApi(urlDirectionsApi);
+
+    if (response != 'error') {
+      if (response == 'use_unrestricted') {
+        String urlDirectionsApiNoRestriction =
+            'https://maps.googleapis.com/maps/api/directions/json?destination=${destination.latitude},${destination.longitude}&origin=${source.latitude},${source.longitude}&mode=driving&key=${dotenv.env['GOOGLE_MAPS_NO_RESTRICTION_API_KEY']}';
+
+        response = await sendRequestToApi(urlDirectionsApiNoRestriction);
+
+        if (response['status'] == 'OK') {
+          DirectionDetails directionDetails = DirectionDetails(
+            distanceText: response['routes'][0]['legs'][0]['distance']['text'],
+            distanceValue: response['routes'][0]['legs'][0]['distance']
+                ['value'],
+            durationText: response['routes'][0]['legs'][0]['duration']['text'],
+            durationValue: response['routes'][0]['legs'][0]['duration']
+                ['value'],
+            encodedPoints: response['routes'][0]['overview_polyline']['points'],
+          );
+
+          return directionDetails;
+        }
+      }
+    }
+
+    return null;
   }
 }

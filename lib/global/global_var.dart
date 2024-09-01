@@ -13,6 +13,8 @@ const CameraPosition casablancaInitialPosition = CameraPosition(
   zoom: 14.4746,
 );
 
+Position? currentPositionOfDriver;
+
 StreamSubscription<Position>? homeTabPageStreamSubscription;
 
 bool isGeofireInitialized = false;

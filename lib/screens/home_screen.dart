@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/methods/map_theme_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/push_notification/push_notification_system.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -30,8 +31,6 @@ class _HomeScreenState extends State<HomeScreen>
 
   GoogleMapController? controllerGoogleMap;
 
-  Position? currentPositionOfDriver;
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool isDriverAvailableServerSide = false;
@@ -42,26 +41,6 @@ class _HomeScreenState extends State<HomeScreen>
 
   DatabaseReference onlineDriversRef =
       FirebaseDatabase.instance.ref().child('onlineDrivers');
-
-  void updateMapTheme(GoogleMapController controller, BuildContext context) {
-    String mapStylePath = Theme.of(context).brightness == Brightness.dark
-        ? 'themes/night_style.json'
-        : 'themes/standard_style.json';
-    getJsonFileFromThemes(mapStylePath)
-        .then((value) => setGoogleMapStyle(value, controller));
-  }
-
-  Future<String> getJsonFileFromThemes(String mapStylePath) async {
-    ByteData byteData = await rootBundle.load(mapStylePath);
-    var list = byteData.buffer
-        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
-    return utf8.decode(list);
-  }
-
-  setGoogleMapStyle(String googleMapStyle, GoogleMapController controller) {
-    // ignore: deprecated_member_use
-    controller.setMapStyle(googleMapStyle);
-  }
 
   getCurrentLiveLocationOfDriver() async {
     Position positionOfUser = await Geolocator.getCurrentPosition(
@@ -208,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen>
           initialCameraPosition: casablancaInitialPosition,
           onMapCreated: (GoogleMapController mapController) {
             controllerGoogleMap = mapController;
-            updateMapTheme(controllerGoogleMap!, context);
+            MapThemeMethods().updateMapTheme(controllerGoogleMap!, context);
 
             googleMapCompleterController.complete(controllerGoogleMap);
 
