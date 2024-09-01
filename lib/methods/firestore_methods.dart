@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/trip_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -152,12 +153,29 @@ class FirestoreMethods {
           'vehiculePlateNumber': driverData?['vehiculePlateNumber'] ?? '',
         },
         'status': 'accepted',
+        'driverLocation': {
+          'latitude': currentPositionOfDriver!.latitude,
+          'longitude': currentPositionOfDriver!.longitude,
+        },
       });
 
       return true;
     }
 
     return false;
+  }
+
+  updateTripRequestDriverLocation(String tripId, LatLng currentPosition) async {
+    // update driver location tripRequest
+    Map<String, dynamic> updatedLocation = {
+      'latitude': currentPosition.latitude,
+      'longitude': currentPosition.longitude,
+    };
+
+    await _firestore
+        .collection('tripRequests')
+        .doc(tripId)
+        .update({'driverLocation': updatedLocation});
   }
 
   Future<bool> getDriverAvailabilityStatus() async {

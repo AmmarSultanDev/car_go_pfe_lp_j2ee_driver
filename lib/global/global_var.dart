@@ -17,6 +17,8 @@ Position? currentPositionOfDriver;
 
 StreamSubscription<Position>? homeTabPageStreamSubscription;
 
+StreamSubscription<Position>? newTripStreamSubscription;
+
 bool isGeofireInitialized = false;
 
 int timerDuration = 20;

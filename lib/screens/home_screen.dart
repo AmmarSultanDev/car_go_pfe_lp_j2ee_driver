@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
@@ -8,7 +7,6 @@ import 'package:car_go_pfe_lp_j2ee_driver/push_notification/push_notification_sy
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -276,12 +274,13 @@ class _HomeScreenState extends State<HomeScreen>
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: ElevatedButton(
-                                      onPressed: () async {
+                                      onPressed: () {
                                         if (!isDriverAvailable) {
-                                          await goOnline();
+                                          goOnline();
                                           //close the bottom sheet
-                                          if (context.mounted)
+                                          if (context.mounted) {
                                             Navigator.pop(context);
+                                          }
 
                                           setState(() {
                                             driverStatusColor = Colors.red;
