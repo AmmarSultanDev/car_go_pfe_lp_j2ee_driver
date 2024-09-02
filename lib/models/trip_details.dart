@@ -9,7 +9,7 @@ class TripDetails {
 
   String? passengerDisplayName;
   String? passengerPhoneNumber;
-  String? fairAmout;
+  String? fareAmount;
 
   TripDetails({
     this.tripId,
@@ -19,6 +19,6 @@ class TripDetails {
     this.dropOffAddress,
     this.passengerDisplayName,
     this.passengerPhoneNumber,
-    this.fairAmout,
+    this.fareAmount,
   });
 }

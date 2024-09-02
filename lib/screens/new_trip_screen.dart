@@ -7,6 +7,7 @@ import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/map_theme_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/trip_details.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/widgets/payment_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
@@ -265,9 +266,14 @@ class _NewTripScreenState extends State<NewTripScreen> {
     await _firestoreMethods.updateFinalDriverLocation(
         widget.tripDetails.tripId!, driverPosistion);
 
-    const CommonMethods().resumeLocationUpdates(currentPositionOfDriver!);
-
-    if (mounted) Navigator.pop(context);
+    if (mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) =>
+            PaymentDialog(fareAmount: widget.tripDetails.fareAmount!),
+      );
+    }
   }
 
   @override

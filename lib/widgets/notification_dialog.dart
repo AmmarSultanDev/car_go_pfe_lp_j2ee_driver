@@ -153,7 +153,7 @@ class _NotificationDialogState extends State<NotificationDialog> {
                             color: Theme.of(context).colorScheme.onSurface),
                       ),
                       Text(
-                        '\$ ${widget.tripDetails.fairAmout}',
+                        '\$ ${widget.tripDetails.fareAmount}',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.bold),

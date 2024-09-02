@@ -115,13 +115,13 @@ class CommonMethods {
     Geofire.removeLocation(FirebaseAuth.instance.currentUser!.uid);
   }
 
-  resumeLocationUpdates(Position driverCurrentPosition) async {
+  resumeLocationUpdates() async {
     if (homeTabPageStreamSubscription != null) {
       homeTabPageStreamSubscription!.resume();
     }
     // the driver now is available
     Geofire.setLocation(FirebaseAuth.instance.currentUser!.uid,
-        driverCurrentPosition.latitude, driverCurrentPosition.longitude);
+        currentPositionOfDriver!.latitude, currentPositionOfDriver!.longitude);
   }
 
   static sendRequestToApi(String apiURL) async {
