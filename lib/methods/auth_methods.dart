@@ -1,3 +1,4 @@
+import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/storage_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart' as model;
 import 'package:car_go_pfe_lp_j2ee_driver/providers/driver_provider.dart';
@@ -142,6 +143,7 @@ class AuthMethods {
   // signout user
   Future<void> signoutUser() async {
     if (_auth.currentUser != null) {
+      const CommonMethods().saveDriverStatus(false);
       await _auth.signOut();
     }
   }

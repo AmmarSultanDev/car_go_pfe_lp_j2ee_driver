@@ -16,6 +16,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CommonMethods {
@@ -193,5 +194,17 @@ class CommonMethods {
       await Permission.phone.request();
       makePhoneCall(phoneNumber);
     }
+  }
+
+  // Load driver's status
+  Future<bool> loadDriverStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isDriverOnline') ?? false;
+  }
+
+  // Save driver's status
+  Future<void> saveDriverStatus(bool isOnline) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDriverOnline', isOnline);
   }
 }

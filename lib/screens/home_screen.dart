@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/map_theme_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/push_notification/push_notification_system.dart';
@@ -10,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,6 +30,8 @@ class _HomeScreenState extends State<HomeScreen>
   GoogleMapController? controllerGoogleMap;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  final CommonMethods commonMethods = const CommonMethods();
 
   String driverStatusText = 'Go Online';
   Color driverStatusColor = Colors.green;
@@ -82,24 +84,19 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
-  // Load driver's status
-  Future<bool> loadDriverStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('isDriverOnline') ?? false;
-  }
-
-  // Save driver's status
-  Future<void> saveDriverStatus(bool isOnline) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isDriverOnline', isOnline);
-  }
-
   checkDriverAvailabilityOnServer() async {
-    var driverAvailibilityOnServer =
-        await FirestoreMethods().getDriverAvailabilityStatus();
+    FirestoreMethods().getDriverAvailabilityStatus().then((value) {
+      if (value != null) {
+        if (value == true) {
+          commonMethods.saveDriverStatus(true);
+        } else {
+          commonMethods.saveDriverStatus(false);
+        }
 
-    setState(() {
-      isDriverAvailableServerSide = driverAvailibilityOnServer;
+        setState(() {
+          isDriverAvailableServerSide = value;
+        });
+      }
     });
   }
 
@@ -108,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen>
     if (initialized) {
       isGeofireInitialized = true;
     }
-    await saveDriverStatus(true);
+    await commonMethods.saveDriverStatus(true);
   }
 
   goOffline() async {
@@ -126,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen>
       isGeofireInitialized = false;
     }
 
-    await saveDriverStatus(false);
+    await commonMethods.saveDriverStatus(false);
   }
 
   initializePushNotificationSystem() async {
@@ -146,7 +143,8 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   setDriverAvailability() {
-    loadDriverStatus().then((isOnline) {
+    commonMethods.loadDriverStatus().then((isOnline) {
+      print('isOnline: $isOnline');
       if (isOnline && isDriverAvailableServerSide) {
         setState(() {
           driverStatusColor = Colors.red;

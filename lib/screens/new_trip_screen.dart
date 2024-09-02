@@ -22,6 +22,8 @@ class NewTripScreen extends StatefulWidget {
 }
 
 class _NewTripScreenState extends State<NewTripScreen> {
+  final FirestoreMethods _firestoreMethods = FirestoreMethods();
+
   final Completer<GoogleMapController> googleMapCompleterController =
       Completer<GoogleMapController>();
 
@@ -44,6 +46,10 @@ class _NewTripScreenState extends State<NewTripScreen> {
   String statusOfTrip = 'accepted';
 
   String duration = '';
+
+  String buttonTitle = 'Start Trip';
+
+  Color buttonColor = Colors.blueAccent;
 
   makeMarker() async {
     if (movingMarkerIcon == null) {
@@ -131,7 +137,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
     Marker endMarker = Marker(
       markerId: const MarkerId('endMarkerId'),
       position: end,
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
       infoWindow: const InfoWindow(title: 'End'),
     );
 
@@ -320,6 +326,9 @@ class _NewTripScreenState extends State<NewTripScreen> {
                       ),
                     ),
                     const SizedBox(height: 5),
+                    // distance
+
+                    // user name + call button
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -359,7 +368,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
                       ],
                     ),
 
-                    const SizedBox(height: 22),
+                    const SizedBox(height: 12),
 
                     // pick up icon + location
                     Row(
@@ -395,7 +404,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 22),
+                    const SizedBox(height: 12),
 
                     // dropOff icon + location
 
@@ -431,6 +440,70 @@ class _NewTripScreenState extends State<NewTripScreen> {
                           ],
                         ),
                       ],
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (statusOfTrip == 'accepted') {
+                            // the driver will go to the user pick up location
+                            _firestoreMethods
+                                .updateTripRequestStatus(
+                                    widget.tripDetails.tripId!, 'driverComing')
+                                .then((value) {
+                              if (value) {
+                                setState(() {
+                                  statusOfTrip = 'driverComing';
+                                  buttonTitle = 'Start Trip';
+                                  buttonColor = Colors.blueAccent;
+                                });
+                              }
+                            });
+                          } else if (statusOfTrip == 'driverComing') {
+                            // the driver will start the trip
+                            _firestoreMethods
+                                .updateTripRequestStatus(
+                                    widget.tripDetails.tripId!, 'onTrip')
+                                .then((value) {
+                              if (value) {
+                                setState(() {
+                                  statusOfTrip = 'onTrip';
+                                  buttonTitle = 'End Trip';
+                                  buttonColor = Colors.red;
+                                });
+                              }
+                            });
+                          } else if (statusOfTrip == 'onTrip') {
+                            // the driver will end the trip
+                            _firestoreMethods
+                                .updateTripRequestStatus(
+                                    widget.tripDetails.tripId!, 'ended')
+                                .then((value) {
+                              if (value) {
+                                Navigator.pop(context);
+                              }
+                            });
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: buttonColor,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 80, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                        ),
+                        child: Text(
+                          buttonTitle,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),

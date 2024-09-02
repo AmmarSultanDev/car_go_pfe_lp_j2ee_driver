@@ -190,4 +190,10 @@ class FirestoreMethods {
       return false;
     }
   }
+
+  updateTripRequestStatus(String tripId, String status) async {
+    await _firestore.collection('tripRequests').doc(tripId).update({
+      'status': status,
+    });
+  }
 }
