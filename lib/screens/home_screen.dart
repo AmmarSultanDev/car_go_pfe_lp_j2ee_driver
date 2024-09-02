@@ -165,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     super.build(context);
 
-    setDriverAvailability();
+    //setDriverAvailability();
 
     return Stack(
       children: [

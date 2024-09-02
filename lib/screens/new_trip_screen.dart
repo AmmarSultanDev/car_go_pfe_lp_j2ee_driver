@@ -45,9 +45,11 @@ class _NewTripScreenState extends State<NewTripScreen> {
 
   String statusOfTrip = 'accepted';
 
-  String duration = '';
+  String durationText = '';
 
-  String buttonTitle = 'Start Trip';
+  String distanceText = '';
+
+  String buttonTitle = 'Arrived';
 
   Color buttonColor = Colors.blueAccent;
 
@@ -239,7 +241,8 @@ class _NewTripScreenState extends State<NewTripScreen> {
       if (driverToDestinationDirectionDetails != null) {
         isRequestingDirection = false;
         setState(() {
-          duration = driverToDestinationDirectionDetails.durationText!;
+          durationText = driverToDestinationDirectionDetails.durationText!;
+          distanceText = driverToDestinationDirectionDetails.distanceText!;
         });
       }
     }
@@ -315,10 +318,10 @@ class _NewTripScreenState extends State<NewTripScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // trip duration
+                    // trip duration + distance
                     Center(
                       child: Text(
-                        duration,
+                        '$durationText - $distanceText',
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -326,7 +329,6 @@ class _NewTripScreenState extends State<NewTripScreen> {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    // distance
 
                     // user name + call button
                     Row(
@@ -446,34 +448,49 @@ class _NewTripScreenState extends State<NewTripScreen> {
 
                     Center(
                       child: ElevatedButton(
-                        onPressed: () async {
+                        onPressed: () {
                           if (statusOfTrip == 'accepted') {
                             // the driver will go to the user pick up location
                             _firestoreMethods
                                 .updateTripRequestStatus(
-                                    widget.tripDetails.tripId!, 'driverComing')
-                                .then((value) {
-                              if (value) {
-                                setState(() {
-                                  statusOfTrip = 'driverComing';
-                                  buttonTitle = 'Start Trip';
-                                  buttonColor = Colors.blueAccent;
-                                });
-                              }
+                                    widget.tripDetails.tripId!, 'arrived')
+                                .then((value) async {
+                              print(value);
+
+                              setState(() {
+                                statusOfTrip = 'arrived';
+                                buttonTitle = 'Start Trip';
+                                buttonColor = Colors.blueAccent;
+                              });
+
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return const LoadingDialog(
+                                      messageText: 'Please wait...',
+                                    );
+                                  });
+
+                              await drawRoute(
+                                  widget.tripDetails.pickupLocationCoordinates!,
+                                  widget.tripDetails
+                                      .destinationLocationCoordinates!);
+
+                              updateTripDetailsInformations();
+
+                              if (context.mounted) Navigator.pop(context);
                             });
-                          } else if (statusOfTrip == 'driverComing') {
+                          } else if (statusOfTrip == 'arrived') {
                             // the driver will start the trip
                             _firestoreMethods
                                 .updateTripRequestStatus(
                                     widget.tripDetails.tripId!, 'onTrip')
                                 .then((value) {
-                              if (value) {
-                                setState(() {
-                                  statusOfTrip = 'onTrip';
-                                  buttonTitle = 'End Trip';
-                                  buttonColor = Colors.red;
-                                });
-                              }
+                              setState(() {
+                                statusOfTrip = 'onTrip';
+                                buttonTitle = 'End Trip';
+                                buttonColor = Colors.red;
+                              });
                             });
                           } else if (statusOfTrip == 'onTrip') {
                             // the driver will end the trip
@@ -481,9 +498,9 @@ class _NewTripScreenState extends State<NewTripScreen> {
                                 .updateTripRequestStatus(
                                     widget.tripDetails.tripId!, 'ended')
                                 .then((value) {
-                              if (value) {
-                                Navigator.pop(context);
-                              }
+                              const CommonMethods().resumeLocationUpdates(
+                                  currentPositionOfDriver!);
+                              if (context.mounted) Navigator.pop(context);
                             });
                           }
                         },
