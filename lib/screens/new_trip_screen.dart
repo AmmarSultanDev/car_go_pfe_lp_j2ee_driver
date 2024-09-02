@@ -228,7 +228,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
 
       LatLng dropOffDestinationLocationLatLng;
 
-      if (statusOfTrip == 'accpeted') {
+      if (statusOfTrip == 'accepted') {
         dropOffDestinationLocationLatLng =
             widget.tripDetails.pickupLocationCoordinates!;
       } else {
