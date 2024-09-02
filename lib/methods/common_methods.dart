@@ -16,6 +16,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 class CommonMethods {
   const CommonMethods();
@@ -177,5 +178,20 @@ class CommonMethods {
     }
 
     return null;
+  }
+
+  makePhoneCall(String phoneNumber) async {
+    String telScheme = 'tel:$phoneNumber';
+
+    if (await Permission.phone.isGranted) {
+      if (await canLaunchUrl(Uri.parse(telScheme))) {
+        await launchUrl(Uri.parse(telScheme));
+      } else {
+        throw 'Could not launch $telScheme';
+      }
+    } else {
+      await Permission.phone.request();
+      makePhoneCall(phoneNumber);
+    }
   }
 }

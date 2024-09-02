@@ -39,6 +39,12 @@ class _NewTripPageState extends State<NewTripPage> {
 
   BitmapDescriptor? movingMarkerIcon;
 
+  bool isRequestingDirection = false;
+
+  String statusOfTrip = 'accepted';
+
+  String duration = '';
+
   makeMarker() async {
     if (movingMarkerIcon == null) {
       ImageConfiguration imageConfiguration =
@@ -188,12 +194,49 @@ class _NewTripPageState extends State<NewTripPage> {
 
       lastPosition = currentPosition;
 
-      //update tip details informations
+      //update trip details informations
+      updateTripDetailsInformations();
 
       // update driver location tripRequest
       FirestoreMethods().updateTripRequestDriverLocation(
           widget.tripDetails.tripId!, lastPosition);
     });
+  }
+
+  updateTripDetailsInformations() async {
+    if (!isRequestingDirection) {
+      isRequestingDirection = true;
+
+      if (currentPositionOfDriver == null) {
+        return;
+      }
+
+      LatLng driverCurrentPositionLatLng = LatLng(
+        currentPositionOfDriver!.latitude,
+        currentPositionOfDriver!.longitude,
+      );
+
+      LatLng dropOffDestinationLocationLatLng;
+
+      if (statusOfTrip == 'accpeted') {
+        dropOffDestinationLocationLatLng =
+            widget.tripDetails.pickupLocationCoordinates!;
+      } else {
+        dropOffDestinationLocationLatLng =
+            widget.tripDetails.destinationLocationCoordinates!;
+      }
+
+      var driverToDestinationDirectionDetails =
+          await CommonMethods.getDirectionDetailsFromApi(
+              driverCurrentPositionLatLng, dropOffDestinationLocationLatLng);
+
+      if (driverToDestinationDirectionDetails != null) {
+        isRequestingDirection = false;
+        setState(() {
+          duration = driverToDestinationDirectionDetails.durationText!;
+        });
+      }
+    }
   }
 
   @override
@@ -235,6 +278,91 @@ class _NewTripPageState extends State<NewTripPage> {
               getLiveLocationUpdates();
             },
           ),
+
+          // trip details
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).canvasColor,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 16,
+                    spreadRadius: 0.5,
+                    offset: Offset(0.7, 0.7),
+                  ),
+                ],
+              ),
+              height: 282,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 18,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // trip duration
+                    Center(
+                      child: Text(
+                        duration,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // user name
+                        Text(
+                          widget.tripDetails.passengerDisplayName!,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        // user phone number
+                        GestureDetector(
+                          onTap: () {
+                            const CommonMethods().makePhoneCall(
+                                widget.tripDetails.passengerPhoneNumber!);
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.only(right: 10),
+                            child: Column(
+                              children: const [
+                                Icon(
+                                  Icons.call,
+                                  color: Colors.green,
+                                ),
+                                Text(
+                                  'Call',
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );
