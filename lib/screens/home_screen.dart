@@ -85,19 +85,22 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   checkDriverAvailabilityOnServer() async {
-    FirestoreMethods().getDriverAvailabilityStatus().then((value) {
-      if (value != null) {
-        if (value == true) {
-          commonMethods.saveDriverStatus(true);
-        } else {
-          commonMethods.saveDriverStatus(false);
-        }
+    bool? isDriverAvailableServerSide =
+        await FirestoreMethods().getDriverAvailabilityStatus();
 
-        setState(() {
-          isDriverAvailableServerSide = value;
-        });
-      }
-    });
+    if (isDriverAvailableServerSide == true) {
+      setState(() {
+        driverStatusColor = Colors.red;
+        driverStatusText = 'Go Offline';
+        isDriverAvailable = true;
+      });
+    } else {
+      setState(() {
+        driverStatusColor = Colors.green;
+        driverStatusText = 'Go Online';
+        isDriverAvailable = false;
+      });
+    }
   }
 
   goOnline() async {
@@ -165,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     super.build(context);
 
-    //setDriverAvailability();
+    checkDriverAvailabilityOnServer();
 
     return Stack(
       children: [

@@ -53,6 +53,8 @@ class _NewTripScreenState extends State<NewTripScreen> {
 
   Color buttonColor = Colors.blueAccent;
 
+  bool isButtonEnabled = true;
+
   makeMarker() async {
     if (movingMarkerIcon == null) {
       ImageConfiguration imageConfiguration =
@@ -448,64 +450,78 @@ class _NewTripScreenState extends State<NewTripScreen> {
 
                     Center(
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (statusOfTrip == 'accepted') {
-                            // the driver will go to the user pick up location
-                            _firestoreMethods
-                                .updateTripRequestStatus(
-                                    widget.tripDetails.tripId!, 'arrived')
-                                .then((value) async {
-                              print(value);
+                        onPressed: isButtonEnabled
+                            ? () {
+                                setState(() {
+                                  isButtonEnabled = false;
+                                });
+                                if (statusOfTrip == 'accepted') {
+                                  // the driver will go to the user pick up location
+                                  _firestoreMethods
+                                      .updateTripRequestStatus(
+                                          widget.tripDetails.tripId!, 'arrived')
+                                      .then((value) async {
+                                    print(value);
 
-                              setState(() {
-                                statusOfTrip = 'arrived';
-                                buttonTitle = 'Start Trip';
-                                buttonColor = Colors.blueAccent;
-                              });
+                                    setState(() {
+                                      statusOfTrip = 'arrived';
+                                      buttonTitle = 'Start Trip';
+                                      buttonColor = Colors.blueAccent;
+                                    });
 
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return const LoadingDialog(
-                                      messageText: 'Please wait...',
-                                    );
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return const LoadingDialog(
+                                            messageText: 'Please wait...',
+                                          );
+                                        });
+
+                                    await drawRoute(
+                                        widget.tripDetails
+                                            .pickupLocationCoordinates!,
+                                        widget.tripDetails
+                                            .destinationLocationCoordinates!);
+
+                                    updateTripDetailsInformations();
+
+                                    if (context.mounted) Navigator.pop(context);
                                   });
-
-                              await drawRoute(
-                                  widget.tripDetails.pickupLocationCoordinates!,
-                                  widget.tripDetails
-                                      .destinationLocationCoordinates!);
-
-                              updateTripDetailsInformations();
-
-                              if (context.mounted) Navigator.pop(context);
-                            });
-                          } else if (statusOfTrip == 'arrived') {
-                            // the driver will start the trip
-                            _firestoreMethods
-                                .updateTripRequestStatus(
-                                    widget.tripDetails.tripId!, 'onTrip')
-                                .then((value) {
-                              setState(() {
-                                statusOfTrip = 'onTrip';
-                                buttonTitle = 'End Trip';
-                                buttonColor = Colors.red;
-                              });
-                            });
-                          } else if (statusOfTrip == 'onTrip') {
-                            // the driver will end the trip
-                            _firestoreMethods
-                                .updateTripRequestStatus(
-                                    widget.tripDetails.tripId!, 'ended')
-                                .then((value) {
-                              const CommonMethods().resumeLocationUpdates(
-                                  currentPositionOfDriver!);
-                              if (context.mounted) Navigator.pop(context);
-                            });
-                          }
-                        },
+                                } else if (statusOfTrip == 'arrived') {
+                                  // the driver will start the trip
+                                  _firestoreMethods
+                                      .updateTripRequestStatus(
+                                          widget.tripDetails.tripId!, 'onTrip')
+                                      .then((value) {
+                                    setState(() {
+                                      statusOfTrip = 'onTrip';
+                                      buttonTitle = 'End Trip';
+                                      buttonColor = Colors.red;
+                                    });
+                                  });
+                                } else if (statusOfTrip == 'onTrip') {
+                                  // the driver will end the trip
+                                  _firestoreMethods
+                                      .updateTripRequestStatus(
+                                          widget.tripDetails.tripId!, 'ended')
+                                      .then((value) {
+                                    const CommonMethods().resumeLocationUpdates(
+                                        currentPositionOfDriver!);
+                                    if (context.mounted) Navigator.pop(context);
+                                  });
+                                }
+                                setState(() {
+                                  isButtonEnabled = true;
+                                });
+                              }
+                            : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: buttonColor,
+                          backgroundColor:
+                              isButtonEnabled ? buttonColor : Colors.grey,
+                          disabledForegroundColor:
+                              Colors.grey.withOpacity(0.38),
+                          disabledBackgroundColor:
+                              Colors.grey.withOpacity(0.12),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 80, vertical: 15),
                           shape: RoundedRectangleBorder(
