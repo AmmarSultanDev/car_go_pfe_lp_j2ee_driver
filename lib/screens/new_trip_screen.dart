@@ -306,7 +306,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
                   ),
                 ],
               ),
-              height: 282,
+              height: 300,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
