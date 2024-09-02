@@ -24,3 +24,7 @@ bool isGeofireInitialized = false;
 int timerDuration = 20;
 
 final audioPlayer = AudioPlayer();
+
+bool isDriverAvailable = false;
+
+bool isDriverAvailableServerSide = false;

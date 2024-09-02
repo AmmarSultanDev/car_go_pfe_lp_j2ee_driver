@@ -12,16 +12,16 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class NewTripPage extends StatefulWidget {
-  const NewTripPage({super.key, required this.tripDetails});
+class NewTripScreen extends StatefulWidget {
+  const NewTripScreen({super.key, required this.tripDetails});
 
   final TripDetails tripDetails;
 
   @override
-  State<NewTripPage> createState() => _NewTripPageState();
+  State<NewTripScreen> createState() => _NewTripScreenState();
 }
 
-class _NewTripPageState extends State<NewTripPage> {
+class _NewTripScreenState extends State<NewTripScreen> {
   final Completer<GoogleMapController> googleMapCompleterController =
       Completer<GoogleMapController>();
 
@@ -357,7 +357,81 @@ class _NewTripPageState extends State<NewTripPage> {
                           ),
                         ),
                       ],
-                    )
+                    ),
+
+                    const SizedBox(height: 22),
+
+                    // pick up icon + location
+                    Row(
+                      children: [
+                        Image.asset(
+                          'assets/images/pin_map_start_position.png',
+                          height: 16,
+                          width: 16,
+                        ),
+                        const SizedBox(
+                          width: 18,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Pick Up',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              widget.tripDetails.pickupAddress!,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 22),
+
+                    // dropOff icon + location
+
+                    Row(
+                      children: [
+                        Image.asset(
+                          'assets/images/pin_map_destination.png',
+                          height: 16,
+                          width: 16,
+                        ),
+                        const SizedBox(
+                          width: 18,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Drop Off',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              widget.tripDetails.dropOffAddress!,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

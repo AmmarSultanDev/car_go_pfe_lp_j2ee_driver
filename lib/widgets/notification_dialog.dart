@@ -5,7 +5,7 @@ import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/trip_details.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/screens/new_trip_page.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/screens/new_trip_screen.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +74,8 @@ class _NotificationDialogState extends State<NotificationDialog> {
       if (mounted) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => NewTripPage(tripDetails: widget.tripDetails),
+            builder: (context) =>
+                NewTripScreen(tripDetails: widget.tripDetails),
           ),
         );
       }

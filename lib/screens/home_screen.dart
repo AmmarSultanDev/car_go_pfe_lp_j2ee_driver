@@ -31,9 +31,6 @@ class _HomeScreenState extends State<HomeScreen>
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  bool isDriverAvailableServerSide = false;
-
-  bool isDriverAvailable = false;
   String driverStatusText = 'Go Online';
   Color driverStatusColor = Colors.green;
 
@@ -98,11 +95,11 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   checkDriverAvailabilityOnServer() async {
-    isDriverAvailableServerSide =
+    var driverAvailibilityOnServer =
         await FirestoreMethods().getDriverAvailabilityStatus();
 
     setState(() {
-      isDriverAvailableServerSide = isDriverAvailableServerSide;
+      isDriverAvailableServerSide = driverAvailibilityOnServer;
     });
   }
 
@@ -274,9 +271,9 @@ class _HomeScreenState extends State<HomeScreen>
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: () async {
                                         if (!isDriverAvailable) {
-                                          goOnline();
+                                          await goOnline();
                                           //close the bottom sheet
                                           if (context.mounted) {
                                             Navigator.pop(context);
@@ -290,9 +287,11 @@ class _HomeScreenState extends State<HomeScreen>
 
                                           setAndGetLocationUpdates();
                                         } else {
-                                          goOffline();
+                                          await goOffline();
 
-                                          if (mounted) Navigator.pop(context);
+                                          if (context.mounted) {
+                                            Navigator.pop(context);
+                                          }
 
                                           setState(() {
                                             driverStatusColor = Colors.green;
@@ -302,10 +301,9 @@ class _HomeScreenState extends State<HomeScreen>
                                         }
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            (driverStatusText == 'Go Online')
-                                                ? Colors.green
-                                                : Colors.red,
+                                        backgroundColor: (!isDriverAvailable)
+                                            ? Colors.green
+                                            : Colors.red,
                                       ),
                                       child: Text(
                                         'Confirm',
