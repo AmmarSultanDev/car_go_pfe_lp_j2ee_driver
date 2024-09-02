@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class FirestoreMethods {
@@ -115,6 +114,8 @@ class FirestoreMethods {
       tripDetails.passengerPhoneNumber =
           data?['passengerInfo']['phoneNumber'] ?? '';
 
+      tripDetails.fairAmout = data?['fairAmount'] ?? '';
+
       return tripDetails;
     }
     return null;
@@ -176,6 +177,19 @@ class FirestoreMethods {
         .collection('tripRequests')
         .doc(tripId)
         .update({'driverLocation': updatedLocation});
+  }
+
+  updateFinalDriverLocation(String tripId, LatLng currentPosition) async {
+    // update driver location tripRequest
+    Map<String, dynamic> updatedLocation = {
+      'latitude': currentPosition.latitude,
+      'longitude': currentPosition.longitude,
+    };
+
+    await _firestore
+        .collection('tripRequests')
+        .doc(tripId)
+        .update({'driverInfo.destinationCoordinates': updatedLocation});
   }
 
   Future<bool> getDriverAvailabilityStatus() async {

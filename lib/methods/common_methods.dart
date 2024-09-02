@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/direction_details.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -206,5 +207,13 @@ class CommonMethods {
   Future<void> saveDriverStatus(bool isOnline) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isDriverOnline', isOnline);
+  }
+
+  playTripEndedSound() {
+    audioPlayer.play(AssetSource('sounds/trip_ended.wav'));
+  }
+
+  playFairAmountReceivedSound() {
+    audioPlayer.play(AssetSource('sounds/fair_amount_received.wav'));
   }
 }

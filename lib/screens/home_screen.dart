@@ -5,6 +5,7 @@ import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/map_theme_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/push_notification/push_notification_system.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -85,8 +86,15 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   checkDriverAvailabilityOnServer() async {
+    showDialog(
+        context: context,
+        builder: (context) => const LoadingDialog(
+              messageText: 'Loading driver availability status...',
+            ));
     bool? isDriverAvailableServerSide =
         await FirestoreMethods().getDriverAvailabilityStatus();
+
+    if (mounted) Navigator.of(context).pop();
 
     if (isDriverAvailableServerSide == true) {
       setState(() {

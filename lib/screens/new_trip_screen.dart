@@ -24,6 +24,8 @@ class NewTripScreen extends StatefulWidget {
 class _NewTripScreenState extends State<NewTripScreen> {
   final FirestoreMethods _firestoreMethods = FirestoreMethods();
 
+  final CommonMethods _commonMethods = const CommonMethods();
+
   final Completer<GoogleMapController> googleMapCompleterController =
       Completer<GoogleMapController>();
 
@@ -250,6 +252,24 @@ class _NewTripScreenState extends State<NewTripScreen> {
     }
   }
 
+  endTrip() async {
+    newTripStreamSubscription!.cancel();
+
+    _commonMethods.playTripEndedSound();
+
+    var driverPosistion = LatLng(
+      currentPositionOfDriver!.latitude,
+      currentPositionOfDriver!.longitude,
+    );
+
+    await _firestoreMethods.updateFinalDriverLocation(
+        widget.tripDetails.tripId!, driverPosistion);
+
+    const CommonMethods().resumeLocationUpdates(currentPositionOfDriver!);
+
+    if (mounted) Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     makeMarker();
@@ -353,12 +373,12 @@ class _NewTripScreenState extends State<NewTripScreen> {
                           child: const Padding(
                             padding: EdgeInsets.only(right: 10),
                             child: Column(
-                              children: const [
-                                Icon(
+                              children: [
+                                const Icon(
                                   Icons.call,
                                   color: Colors.green,
                                 ),
-                                Text(
+                                const Text(
                                   'Call',
                                   style: TextStyle(
                                     color: Colors.green,
@@ -505,9 +525,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
                                       .updateTripRequestStatus(
                                           widget.tripDetails.tripId!, 'ended')
                                       .then((value) {
-                                    const CommonMethods().resumeLocationUpdates(
-                                        currentPositionOfDriver!);
-                                    if (context.mounted) Navigator.pop(context);
+                                    endTrip();
                                   });
                                 }
                                 setState(() {

@@ -144,6 +144,22 @@ class _NotificationDialogState extends State<NotificationDialog> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // price
+                  Row(
+                    children: [
+                      Text(
+                        'Price: ',
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface),
+                      ),
+                      Text(
+                        '\$${widget.tripDetails.fairAmout}',
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                   // pick up
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
