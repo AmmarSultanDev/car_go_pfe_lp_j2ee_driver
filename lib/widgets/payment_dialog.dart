@@ -1,4 +1,5 @@
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -69,7 +70,9 @@ class _PaymentDialogState extends State<PaymentDialog> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      await FirestoreMethods().updateDriverTotalEarnings(
+                          double.parse(widget.fareAmount));
                       commonMethods.playFairAmountReceivedSound();
 
                       Navigator.of(context).pop();

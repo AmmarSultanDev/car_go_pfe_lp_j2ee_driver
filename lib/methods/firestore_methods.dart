@@ -210,4 +210,12 @@ class FirestoreMethods {
       'status': status,
     });
   }
+
+  updateDriverTotalEarnings(double fareAmount) {
+    _firestore.collection('earnings').doc(user!.uid).set({
+      'totalEarnings': FieldValue.increment(fareAmount),
+      'lastTripEarnings': fareAmount,
+      'lastTripDate': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
 }
