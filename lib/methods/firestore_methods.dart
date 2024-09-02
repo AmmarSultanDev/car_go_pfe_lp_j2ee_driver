@@ -114,7 +114,7 @@ class FirestoreMethods {
       tripDetails.passengerPhoneNumber =
           data?['passengerInfo']['phoneNumber'] ?? '';
 
-      tripDetails.fairAmout = data?['fairAmount'] ?? '';
+      tripDetails.fairAmout = data?['fareAmount'] ?? '';
 
       return tripDetails;
     }

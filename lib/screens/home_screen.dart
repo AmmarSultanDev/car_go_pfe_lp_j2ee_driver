@@ -86,15 +86,8 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   checkDriverAvailabilityOnServer() async {
-    showDialog(
-        context: context,
-        builder: (context) => const LoadingDialog(
-              messageText: 'Loading driver availability status...',
-            ));
     bool? isDriverAvailableServerSide =
         await FirestoreMethods().getDriverAvailabilityStatus();
-
-    if (mounted) Navigator.of(context).pop();
 
     if (isDriverAvailableServerSide == true) {
       setState(() {

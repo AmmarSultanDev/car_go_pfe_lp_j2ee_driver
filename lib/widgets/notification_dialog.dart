@@ -148,17 +148,20 @@ class _NotificationDialogState extends State<NotificationDialog> {
                   Row(
                     children: [
                       Text(
-                        'Price: ',
+                        'Offered Price: ',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: Theme.of(context).colorScheme.onSurface),
                       ),
                       Text(
-                        '\$${widget.tripDetails.fairAmout}',
+                        '\$ ${widget.tripDetails.fairAmout}',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.bold),
                       ),
                     ],
+                  ),
+                  const SizedBox(
+                    height: 10,
                   ),
                   // pick up
                   Row(
