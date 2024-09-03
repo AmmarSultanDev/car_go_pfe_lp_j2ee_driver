@@ -5,6 +5,7 @@ import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/map_theme_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/push_notification/push_notification_system.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -104,29 +105,42 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   goOnline() async {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) =>
+            const LoadingDialog(messageText: 'Logging you in...'));
+
     bool initialized = await Geofire.initialize('onlineDrivers');
+
     if (initialized) {
       isGeofireInitialized = true;
     }
+
     await commonMethods.saveDriverStatus(true);
+
+    if (mounted) Navigator.pop(context);
   }
 
   goOffline() async {
     await homeTabPageStreamSubscription?.cancel();
     homeTabPageStreamSubscription = null;
 
-    bool? geofireRemoveLocationWithSuccess =
-        await Geofire.removeLocation(_auth.currentUser!.uid);
-
-    if (geofireRemoveLocationWithSuccess == false ||
-        geofireRemoveLocationWithSuccess == null) {
-      await onlineDriversRef.child(_auth.currentUser!.uid).remove();
-      isGeofireInitialized = false;
-    } else {
-      isGeofireInitialized = false;
+    if (mounted) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) =>
+              const LoadingDialog(messageText: 'Logging you out...'));
     }
 
-    await commonMethods.saveDriverStatus(false);
+    await commonMethods.checkGeoFireInitialization();
+
+    commonMethods.saveDriverStatus(false);
+
+    commonMethods.pauseLocationUpdates();
+
+    if (mounted) Navigator.pop(context);
   }
 
   initializePushNotificationSystem() async {
@@ -168,7 +182,10 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     super.build(context);
 
+    commonMethods.checkGeoFireInitialization();
+
     checkDriverAvailabilityOnServer();
+    //setDriverAvailability();
 
     return Stack(
       children: [

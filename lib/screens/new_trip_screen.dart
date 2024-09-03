@@ -346,8 +346,10 @@ class _NewTripScreenState extends State<NewTripScreen> {
                           onPressed: () async {
                             await FirestoreMethods().updateTripRequestStatus(
                                 widget.tripDetails.tripId!, 'canceled');
-                            Navigator.pop(context);
-                            Navigator.pop(context);
+                            await const CommonMethods().resumeLocationUpdates();
+
+                            if (context.mounted) Navigator.pop(context);
+                            if (context.mounted) Navigator.pop(context);
                           },
                           child: const Text('Yes'),
                         ),

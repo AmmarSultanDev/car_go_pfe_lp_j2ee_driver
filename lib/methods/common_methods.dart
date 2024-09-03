@@ -196,6 +196,13 @@ class CommonMethods {
     }
   }
 
+  checkGeoFireInitialization() async {
+    if (!isGeofireInitialized) {
+      await Geofire.initialize('onlineDrivers');
+      isGeofireInitialized = true;
+    }
+  }
+
   // Load driver's status
   Future<bool> loadDriverStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
