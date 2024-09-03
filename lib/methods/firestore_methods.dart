@@ -101,7 +101,7 @@ class FirestoreMethods {
         double.parse(data?['pickUpLocationCoordinates']['latitude'] ?? '0'),
         double.parse(data?['pickUpLocationCoordinates']['longitude'] ?? '0'),
       );
-      tripDetails.pickupAddress = data?['pickUpAddress'] ?? '';
+      tripDetails.pickupAddress = data?['pickUpAddress'] ?? 'Nearby';
 
       tripDetails.destinationLocationCoordinates = LatLng(
         double.parse(data?['dropOffLocationCoordinates']['latitude'] ?? '0'),

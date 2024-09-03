@@ -342,226 +342,236 @@ class _NewTripScreenState extends State<NewTripScreen> {
                   horizontal: 24,
                   vertical: 18,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // trip duration + distance
-                    Center(
-                      child: Text(
-                        '$durationText - $distanceText',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-
-                    // user name + call button
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // user name
-                        Text(
-                          widget.tripDetails.passengerDisplayName!,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // trip duration + distance
+                      Center(
+                        child: Text(
+                          '$durationText - $distanceText',
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        // user phone number
-                        GestureDetector(
-                          onTap: () {
-                            const CommonMethods().makePhoneCall(
-                                widget.tripDetails.passengerPhoneNumber!);
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.only(right: 10),
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.call,
-                                  color: Colors.green,
-                                ),
-                                Text(
-                                  'Call',
-                                  style: TextStyle(
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                      ),
+                      const SizedBox(height: 5),
+
+                      // user name + call button
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // user name
+                          Text(
+                            widget.tripDetails.passengerDisplayName!,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // pick up icon + location
-                    Row(
-                      children: [
-                        Image.asset(
-                          'assets/images/pin_map_start_position.png',
-                          height: 16,
-                          width: 16,
-                        ),
-                        const SizedBox(
-                          width: 18,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Pick Up',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                          // user phone number
+                          GestureDetector(
+                            onTap: () {
+                              const CommonMethods().makePhoneCall(
+                                  widget.tripDetails.passengerPhoneNumber!);
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.only(right: 10),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.call,
+                                    color: Colors.green,
+                                  ),
+                                  Text(
+                                    'Call',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Text(
-                              widget.tripDetails.pickupAddress!,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // pick up icon + location
+                      Container(
+                        width: double.infinity,
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              'assets/images/pin_map_start_position.png',
+                              height: 16,
+                              width: 16,
+                            ),
+                            const SizedBox(
+                              width: 18,
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Pick Up',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    widget.tripDetails.pickupAddress!,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
+                      ),
+                      const SizedBox(height: 12),
 
-                    // dropOff icon + location
+                      // dropOff icon + location
 
-                    Row(
-                      children: [
-                        Image.asset(
-                          'assets/images/pin_map_destination.png',
-                          height: 16,
-                          width: 16,
-                        ),
-                        const SizedBox(
-                          width: 18,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Drop Off',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/pin_map_destination.png',
+                            height: 16,
+                            width: 16,
+                          ),
+                          const SizedBox(
+                            width: 18,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Drop Off',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            Text(
-                              widget.tripDetails.dropOffAddress!,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
+                              Text(
+                                widget.tripDetails.dropOffAddress!,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                            ],
+                          ),
+                        ],
+                      ),
 
-                    const SizedBox(height: 12),
+                      const SizedBox(height: 12),
 
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: isButtonEnabled
-                            ? () {
-                                setState(() {
-                                  isButtonEnabled = false;
-                                });
-                                if (statusOfTrip == 'accepted') {
-                                  // the driver will go to the user pick up location
-                                  _firestoreMethods
-                                      .updateTripRequestStatus(
-                                          widget.tripDetails.tripId!, 'arrived')
-                                      .then((value) async {
-                                    print(value);
-
-                                    setState(() {
-                                      statusOfTrip = 'arrived';
-                                      buttonTitle = 'Start Trip';
-                                      buttonColor = Colors.blueAccent;
-                                    });
-
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return const LoadingDialog(
-                                            messageText: 'Please wait...',
-                                          );
-                                        });
-
-                                    await drawRoute(
-                                        widget.tripDetails
-                                            .pickupLocationCoordinates!,
-                                        widget.tripDetails
-                                            .destinationLocationCoordinates!);
-
-                                    updateTripDetailsInformations();
-
-                                    if (context.mounted) Navigator.pop(context);
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: isButtonEnabled
+                              ? () {
+                                  setState(() {
+                                    isButtonEnabled = false;
                                   });
-                                } else if (statusOfTrip == 'arrived') {
-                                  // the driver will start the trip
-                                  _firestoreMethods
-                                      .updateTripRequestStatus(
-                                          widget.tripDetails.tripId!, 'onTrip')
-                                      .then((value) {
-                                    setState(() {
-                                      statusOfTrip = 'onTrip';
-                                      buttonTitle = 'End Trip';
-                                      buttonColor = Colors.red;
+                                  if (statusOfTrip == 'accepted') {
+                                    // the driver will go to the user pick up location
+                                    _firestoreMethods
+                                        .updateTripRequestStatus(
+                                            widget.tripDetails.tripId!,
+                                            'arrived')
+                                        .then((value) async {
+                                      print(value);
+
+                                      setState(() {
+                                        statusOfTrip = 'arrived';
+                                        buttonTitle = 'Start Trip';
+                                        buttonColor = Colors.blueAccent;
+                                      });
+
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return const LoadingDialog(
+                                              messageText: 'Please wait...',
+                                            );
+                                          });
+
+                                      await drawRoute(
+                                          widget.tripDetails
+                                              .pickupLocationCoordinates!,
+                                          widget.tripDetails
+                                              .destinationLocationCoordinates!);
+
+                                      updateTripDetailsInformations();
+
+                                      if (context.mounted)
+                                        Navigator.pop(context);
                                     });
-                                  });
-                                } else if (statusOfTrip == 'onTrip') {
-                                  // the driver will end the trip
-                                  _firestoreMethods
-                                      .updateTripRequestStatus(
-                                          widget.tripDetails.tripId!, 'ended')
-                                      .then((value) {
-                                    endTrip();
+                                  } else if (statusOfTrip == 'arrived') {
+                                    // the driver will start the trip
+                                    _firestoreMethods
+                                        .updateTripRequestStatus(
+                                            widget.tripDetails.tripId!,
+                                            'onTrip')
+                                        .then((value) {
+                                      setState(() {
+                                        statusOfTrip = 'onTrip';
+                                        buttonTitle = 'End Trip';
+                                        buttonColor = Colors.red;
+                                      });
+                                    });
+                                  } else if (statusOfTrip == 'onTrip') {
+                                    // the driver will end the trip
+                                    _firestoreMethods
+                                        .updateTripRequestStatus(
+                                            widget.tripDetails.tripId!, 'ended')
+                                        .then((value) {
+                                      endTrip();
+                                    });
+                                  }
+                                  setState(() {
+                                    isButtonEnabled = true;
                                   });
                                 }
-                                setState(() {
-                                  isButtonEnabled = true;
-                                });
-                              }
-                            : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              isButtonEnabled ? buttonColor : Colors.grey,
-                          disabledForegroundColor:
-                              Colors.grey.withOpacity(0.38),
-                          disabledBackgroundColor:
-                              Colors.grey.withOpacity(0.12),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 80, vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                isButtonEnabled ? buttonColor : Colors.grey,
+                            disabledForegroundColor:
+                                Colors.grey.withOpacity(0.38),
+                            disabledBackgroundColor:
+                                Colors.grey.withOpacity(0.12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 80, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                            ),
                           ),
-                        ),
-                        child: Text(
-                          buttonTitle,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                          child: Text(
+                            buttonTitle,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
