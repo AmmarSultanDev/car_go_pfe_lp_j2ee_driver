@@ -1,6 +1,5 @@
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class PaymentDialog extends StatefulWidget {

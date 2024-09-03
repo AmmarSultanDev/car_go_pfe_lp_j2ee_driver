@@ -380,11 +380,11 @@ class _NewTripScreenState extends State<NewTripScreen> {
                             padding: EdgeInsets.only(right: 10),
                             child: Column(
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.call,
                                   color: Colors.green,
                                 ),
-                                const Text(
+                                Text(
                                   'Call',
                                   style: TextStyle(
                                     color: Colors.green,
