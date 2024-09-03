@@ -14,8 +14,14 @@ class PaymentDialog extends StatefulWidget {
 
 class _PaymentDialogState extends State<PaymentDialog> {
   CommonMethods commonMethods = const CommonMethods();
+  updateTripStatusToEnded() async {
+    await FirestoreMethods()
+        .updateDriverTotalEarnings(double.parse(widget.fareAmount));
+  }
+
   @override
   Widget build(BuildContext context) {
+    updateTripStatusToEnded();
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -52,6 +58,17 @@ class _PaymentDialogState extends State<PaymentDialog> {
               height: 10,
             ),
             Text(
+              '\$ ${widget.fareAmount}',
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
               'Please collect the fare amount of \$ ${widget.fareAmount}',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -70,9 +87,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ElevatedButton(
-                    onPressed: () async {
-                      await FirestoreMethods().updateDriverTotalEarnings(
-                          double.parse(widget.fareAmount));
+                    onPressed: () {
                       commonMethods.playFairAmountReceivedSound();
 
                       Navigator.of(context).pop();
