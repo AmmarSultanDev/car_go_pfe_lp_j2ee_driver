@@ -10,6 +10,7 @@ class TripDetails {
   String? passengerDisplayName;
   String? passengerPhoneNumber;
   String? fareAmount;
+  String? paymentStatus;
 
   TripDetails({
     this.tripId,
@@ -20,5 +21,6 @@ class TripDetails {
     this.passengerDisplayName,
     this.passengerPhoneNumber,
     this.fareAmount,
+    this.paymentStatus,
   });
 }

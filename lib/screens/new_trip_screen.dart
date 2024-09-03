@@ -270,8 +270,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) =>
-            PaymentDialog(fareAmount: widget.tripDetails.fareAmount!),
+        builder: (context) => PaymentDialog(tripDetails: widget.tripDetails),
       );
     }
   }

@@ -218,4 +218,10 @@ class FirestoreMethods {
       'lastTripDate': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
+
+  confirmPayment(String tripId) async {
+    await _firestore.collection('tripRequests').doc(tripId).update({
+      'paymentStatus': 'paid',
+    });
+  }
 }

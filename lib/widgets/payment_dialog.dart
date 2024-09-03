@@ -1,11 +1,12 @@
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/models/trip_details.dart';
 import 'package:flutter/material.dart';
 
 class PaymentDialog extends StatefulWidget {
-  const PaymentDialog({super.key, required this.fareAmount});
+  const PaymentDialog({super.key, required this.tripDetails});
 
-  final String fareAmount;
+  final TripDetails tripDetails;
 
   @override
   State<PaymentDialog> createState() => _PaymentDialogState();
@@ -14,8 +15,8 @@ class PaymentDialog extends StatefulWidget {
 class _PaymentDialogState extends State<PaymentDialog> {
   CommonMethods commonMethods = const CommonMethods();
   updateTripStatusToEnded() async {
-    await FirestoreMethods()
-        .updateDriverTotalEarnings(double.parse(widget.fareAmount));
+    await FirestoreMethods().updateDriverTotalEarnings(
+        double.parse(widget.tripDetails.fareAmount!));
   }
 
   @override
@@ -57,7 +58,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
               height: 10,
             ),
             Text(
-              '\$ ${widget.fareAmount}',
+              '\$ ${widget.tripDetails.fareAmount}',
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 24,
@@ -68,7 +69,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
               height: 10,
             ),
             Text(
-              'Please collect the fare amount of \$ ${widget.fareAmount}',
+              'Please collect the fare amount of \$ ${widget.tripDetails.fareAmount} from the passenger.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: Theme.of(context).colorScheme.onSurface,
@@ -86,7 +87,10 @@ class _PaymentDialogState extends State<PaymentDialog> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      await FirestoreMethods()
+                          .confirmPayment(widget.tripDetails.tripId!);
+
                       commonMethods.playFairAmountReceivedSound();
 
                       Navigator.of(context).pop();
