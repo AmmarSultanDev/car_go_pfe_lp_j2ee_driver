@@ -314,6 +314,71 @@ class _NewTripScreenState extends State<NewTripScreen> {
               getLiveLocationUpdates();
             },
           ),
+          // cancel button
+          Positioned(
+            top: 50,
+            left: 19,
+            child: GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text('Cancel Trip',
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium!
+                              .copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              )),
+                      content: const Text(
+                          'Are you sure you want to cancel this trip?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('No'),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            await FirestoreMethods().updateTripRequestStatus(
+                                widget.tripDetails.tripId!, 'canceled');
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Yes'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 5,
+                        spreadRadius: 0.5,
+                        offset: Offset(0.7, 0.7),
+                      )
+                    ]),
+                child: CircleAvatar(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  radius: 20,
+                  child: Icon(
+                    Icons.close,
+                    color: Theme.of(context).canvasColor,
+                  ),
+                ),
+              ),
+            ),
+          ),
 
           // trip details
           Positioned(
