@@ -558,7 +558,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
                                   Text(
                                     widget.tripDetails.pickupAddress!,
                                     overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
+                                    maxLines: 1,
                                     style: const TextStyle(
                                       fontSize: 16,
                                       color: Colors.grey,
