@@ -266,8 +266,8 @@ class _SignupScreenState extends State<SignupScreen> {
                         textDirection: TextDirection.rtl,
                         textAlign: TextAlign.left,
                         decoration: const InputDecoration(
-                          labelText: 'Vehicle number',
-                          hintText: 'Enter your vehicle number',
+                          labelText: 'Vehicle plate number',
+                          hintText: 'Enter your vehicle plate number',
                         ),
                       ),
                       const SizedBox(height: 10),
