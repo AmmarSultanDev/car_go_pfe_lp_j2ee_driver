@@ -211,6 +211,27 @@ class FirestoreMethods {
     });
   }
 
+  cancelTripRequest(String tripId) async {
+    try {
+      DocumentSnapshot snap =
+          await _firestore.collection('tripRequests').doc(tripId).get();
+
+      if (snap.exists) {
+        Map<String, dynamic>? data = snap.data() as Map<String, dynamic>?;
+
+        if (data?['status'] == 'canceled') {
+          return;
+        }
+
+        await _firestore.collection('tripRequests').doc(tripId).update({
+          'status': 'canceled_by_driver',
+        });
+      }
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
   updateDriverTotalEarnings(double fareAmount) {
     _firestore.collection('earnings').doc(user!.uid).set({
       'totalEarnings': FieldValue.increment(fareAmount),

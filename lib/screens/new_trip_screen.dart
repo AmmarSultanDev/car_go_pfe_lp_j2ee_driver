@@ -6,8 +6,10 @@ import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/firestore_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/map_theme_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/trip_details.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/widgets/info_dialog.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/payment_dialog.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
@@ -57,6 +59,8 @@ class _NewTripScreenState extends State<NewTripScreen> {
   Color buttonColor = Colors.blueAccent;
 
   bool isButtonEnabled = true;
+
+  StreamSubscription<DocumentSnapshot>? tripRequestStreamSubscription;
 
   makeMarker() async {
     if (movingMarkerIcon == null) {
@@ -275,6 +279,68 @@ class _NewTripScreenState extends State<NewTripScreen> {
     }
   }
 
+  listenToTripRequestStatus() async {
+    DocumentReference tripRequestRef = FirebaseFirestore.instance
+        .collection('tripRequests')
+        .doc(widget.tripDetails.tripId);
+
+    tripRequestStreamSubscription =
+        tripRequestRef.snapshots().listen((DocumentSnapshot snapshot) {
+      if (snapshot.exists) {
+        var data = snapshot.data() as Map<String, dynamic>;
+
+        if (data['status'] != null) {
+          statusOfTrip = data['status'];
+
+          if (statusOfTrip == 'canceled') {
+            whenPassengerCancelTrip();
+          }
+        }
+      }
+    });
+  }
+
+  whenPassengerCancelTrip() async {
+    _commonMethods.playTripCanceledSound();
+
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const InfoDialog(
+            title: 'Trip Canceled',
+            content:
+                'Unfortunately, the passenger has canceled the trip.\n We apologize for any inconvenience caused. We appreciate your understanding and wish you the best of luck on your next trip. Safe travels!'));
+
+    newTripStreamSubscription!.cancel();
+
+    tripRequestStreamSubscription!.cancel();
+
+    await _commonMethods.resumeLocationUpdates();
+
+    if (mounted) Navigator.pop(context);
+  }
+
+  cancelTrip() async {
+    await _firestoreMethods.cancelTripRequest(widget.tripDetails.tripId!);
+
+    await _commonMethods.resumeLocationUpdates();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    listenToTripRequestStatus();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    tripRequestStreamSubscription!.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
     makeMarker();
@@ -344,9 +410,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            await FirestoreMethods().updateTripRequestStatus(
-                                widget.tripDetails.tripId!, 'canceled');
-                            await const CommonMethods().resumeLocationUpdates();
+                            await cancelTrip();
 
                             if (context.mounted) Navigator.pop(context);
                             if (context.mounted) Navigator.pop(context);

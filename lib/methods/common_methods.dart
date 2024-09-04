@@ -222,4 +222,8 @@ class CommonMethods {
   playFairAmountReceivedSound() {
     audioPlayer.play(AssetSource('sounds/fair_amount_received.wav'));
   }
+
+  playTripCanceledSound() {
+    audioPlayer.play(AssetSource('sounds/trip_canceled.wav'));
+  }
 }
