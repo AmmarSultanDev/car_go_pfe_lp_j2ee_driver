@@ -468,7 +468,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
                       const SizedBox(height: 12),
 
                       // pick up icon + location
-                      Container(
+                      SizedBox(
                         width: double.infinity,
                         child: Row(
                           children: [
@@ -584,8 +584,9 @@ class _NewTripScreenState extends State<NewTripScreen> {
 
                                       updateTripDetailsInformations();
 
-                                      if (context.mounted)
+                                      if (context.mounted) {
                                         Navigator.pop(context);
+                                      }
                                     });
                                   } else if (statusOfTrip == 'arrived') {
                                     // the driver will start the trip

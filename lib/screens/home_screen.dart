@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   checkDriverAvailabilityOnServer() async {
-    bool? isDriverAvailableServerSide =
+    isDriverAvailableServerSide =
         await FirestoreMethods().getDriverAvailabilityStatus();
 
     if (isDriverAvailableServerSide == true) {
@@ -115,9 +115,20 @@ class _HomeScreenState extends State<HomeScreen>
 
     if (initialized) {
       isGeofireInitialized = true;
+      await commonMethods.saveDriverStatus(true);
+      setState(() {
+        isDriverAvailable = true;
+      });
+    } else {
+      await commonMethods.saveDriverStatus(false);
+      setState(() {
+        isDriverAvailable = false;
+      });
+      if (mounted) {
+        commonMethods.displaySnackBar(
+            'Could not connect, please try again shortly', context);
+      }
     }
-
-    await commonMethods.saveDriverStatus(true);
 
     if (mounted) Navigator.pop(context);
   }
@@ -182,9 +193,9 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     super.build(context);
 
-    commonMethods.checkGeoFireInitialization();
+    //commonMethods.checkGeoFireInitialization();
 
-    checkDriverAvailabilityOnServer();
+    //checkDriverAvailabilityOnServer();
     //setDriverAvailability();
 
     return Stack(
