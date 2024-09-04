@@ -184,15 +184,22 @@ class CommonMethods {
   makePhoneCall(String phoneNumber) async {
     String telScheme = 'tel:$phoneNumber';
 
-    if (await Permission.phone.isGranted) {
+    if (Platform.isAndroid) {
+      if (await Permission.phone.isGranted) {
+        if (await canLaunchUrl(Uri.parse(telScheme))) {
+          await launchUrl(Uri.parse(telScheme));
+        } else {
+          throw 'Could not launch $telScheme';
+        }
+      } else {
+        await Permission.phone.request();
+      }
+    } else {
       if (await canLaunchUrl(Uri.parse(telScheme))) {
         await launchUrl(Uri.parse(telScheme));
       } else {
         throw 'Could not launch $telScheme';
       }
-    } else {
-      await Permission.phone.request();
-      makePhoneCall(phoneNumber);
     }
   }
 
