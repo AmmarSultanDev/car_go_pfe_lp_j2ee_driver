@@ -38,41 +38,55 @@ class _EarningScreenState extends State<EarningScreen> {
     getEarning();
 
     return Scaffold(
-        body: Column(
-      children: [
-        const SizedBox(
-          height: 100,
-        ),
-        Image.asset(
-          'assets/images/total_earnings.png',
-          height: 200,
-          fit: BoxFit.cover,
-        ),
-        const SizedBox(
-          height: 100,
-        ),
-        // Total Earning
-        ListTile(
-          title: Text(
-            'Total Earning',
-            style: Theme.of(context).textTheme.displayMedium,
+        body: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          const SizedBox(
+            height: 100,
           ),
-          subtitle: Text(totalEarning != null ? totalEarning.toString() : '0'),
-        ),
-        // Earning of the current month
-        ListTile(
-          title: const Text('Earning of the current month'),
-          subtitle: Text(currentMonthEarning != null
-              ? currentMonthEarning.toString()
-              : '0'),
-        ),
-        // Earning of the current week
-        ListTile(
-          title: const Text('Earning of the current week'),
-          subtitle: Text(
-              currentWeekEarning != null ? currentWeekEarning.toString() : '0'),
-        ),
-      ],
+          Image.asset(
+            'assets/images/total_earnings.png',
+            height: 200,
+            fit: BoxFit.cover,
+          ),
+          const SizedBox(
+            height: 100,
+          ),
+          // Total Earning
+          ListTile(
+            title: Text(
+              'Total Earning',
+              style: Theme.of(context).textTheme.displayMedium,
+            ),
+            subtitle: Text(
+              totalEarning != null ? totalEarning!.toStringAsFixed(2) : '0',
+              style: const TextStyle(fontSize: 18),
+            ),
+          ),
+          // Earning of the current month
+          ListTile(
+            title: const Text('Earning of the current month',
+                style: TextStyle(fontSize: 22)),
+            subtitle: Text(
+              currentMonthEarning != null
+                  ? currentMonthEarning!.toStringAsFixed(2)
+                  : '0',
+              style: const TextStyle(fontSize: 18),
+            ),
+          ),
+          // Earning of the current week
+          ListTile(
+            title: const Text('Earning of the current week',
+                style: TextStyle(fontSize: 22)),
+            subtitle: Text(
+                currentWeekEarning != null
+                    ? currentWeekEarning!.toStringAsFixed(2)
+                    : '0',
+                style: const TextStyle(fontSize: 18)),
+          ),
+        ],
+      ),
     ));
   }
 }
