@@ -42,11 +42,12 @@ class TripListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       height: 200,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.black87),
+        border: Border.all(color: Colors.black87.withOpacity(0.2)),
         borderRadius: const BorderRadius.all(Radius.circular(24)),
         color: Theme.of(context).canvasColor,
         boxShadow: [
@@ -83,12 +84,14 @@ class TripListItem extends StatelessWidget {
                         vertical: 5,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
+                        color: isDarkMode
+                            ? Colors.black.withOpacity(0.5)
+                            : Colors.black.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
                         endedTripDetails.dropOffAddress!,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),

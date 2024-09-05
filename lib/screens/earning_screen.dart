@@ -54,14 +54,17 @@ class _EarningScreenState extends State<EarningScreen> {
             height: 100,
           ),
           // Total Earning
-          ListTile(
-            title: Text(
-              'Total Earning',
-              style: Theme.of(context).textTheme.displayMedium,
-            ),
-            subtitle: Text(
-              totalEarning != null ? totalEarning!.toStringAsFixed(2) : '0',
-              style: const TextStyle(fontSize: 18),
+          Card(
+            color: Theme.of(context).cardColor.withOpacity(0.9),
+            child: ListTile(
+              title: Text(
+                'Total Earning',
+                style: Theme.of(context).textTheme.displayMedium,
+              ),
+              subtitle: Text(
+                totalEarning != null ? totalEarning!.toStringAsFixed(2) : '0',
+                style: const TextStyle(fontSize: 18),
+              ),
             ),
           ),
           // Earning of the current month
