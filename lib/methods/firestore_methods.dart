@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class FirestoreMethods {
@@ -160,10 +161,40 @@ class FirestoreMethods {
         },
       });
 
+      // update start time for current trip in trips subcollection of the earnings collection in uid doc in firestore
+      await _firestore
+          .collection('earnings')
+          .doc(user!.uid)
+          .collection('trips')
+          .doc(requestId)
+          .set({
+        'acceptedAt': FieldValue.serverTimestamp(),
+        'pickupAddress': snap['pickUpAddress'] ?? '',
+        'dropOffAddress': snap['dropOffAddress'] ?? '',
+        'fareAmount': snap['fareAmount'] ?? '',
+        'pickUpLocationCoordinates': snap['pickUpLocationCoordinates'] ??
+            {'latitude': 0, 'longitude': 0},
+        'dropOffLocationCoordinates': snap['dropOffLocationCoordinates'] ??
+            {'latitude': 0, 'longitude': 0},
+        'status': 'accepted',
+        'passengerInfo': snap['passengerInfo'] ?? {},
+      }, SetOptions(merge: true));
+
       return true;
     }
 
     return false;
+  }
+
+  startTrip(String tripId) async {
+    await _firestore
+        .collection('earnings')
+        .doc(user!.uid)
+        .collection('trips')
+        .doc(tripId)
+        .update({
+      'startedAt': FieldValue.serverTimestamp(),
+    });
   }
 
   updateTripRequestDriverLocation(String tripId, LatLng currentPosition) async {
@@ -190,6 +221,17 @@ class FirestoreMethods {
         .collection('tripRequests')
         .doc(tripId)
         .update({'driverInfo.destinationCoordinates': updatedLocation});
+
+    // update end time for current trip in trips subcollection of the earnings collection in uid doc in firestore
+    await _firestore
+        .collection('earnings')
+        .doc(user!.uid)
+        .collection('trips')
+        .doc(tripId)
+        .update({
+      'endedAt': FieldValue.serverTimestamp(),
+      'destinationCoordinates': updatedLocation,
+    });
   }
 
   Future<bool> getDriverAvailabilityStatus() async {
@@ -206,6 +248,9 @@ class FirestoreMethods {
   }
 
   updateTripRequestStatus(String tripId, String status) async {
+    if (status == 'onTrip') {
+      await startTrip(tripId);
+    }
     await _firestore.collection('tripRequests').doc(tripId).update({
       'status': status,
     });
@@ -227,6 +272,23 @@ class FirestoreMethods {
           'status': 'canceled_by_driver',
         });
       }
+
+      // delete the trip from the earnings collection
+      DocumentSnapshot trip = await _firestore
+          .collection('earnings')
+          .doc(user!.uid)
+          .collection('trips')
+          .doc(tripId)
+          .get();
+
+      if (trip.exists) {
+        await _firestore
+            .collection('earnings')
+            .doc(user!.uid)
+            .collection('trips')
+            .doc(tripId)
+            .delete();
+      }
     } on Exception catch (e) {
       print(e);
     }
@@ -241,8 +303,110 @@ class FirestoreMethods {
   }
 
   confirmPayment(String tripId) async {
-    await _firestore.collection('tripRequests').doc(tripId).update({
-      'paymentStatus': 'paid',
-    });
+    try {
+      await _firestore.collection('tripRequests').doc(tripId).update({
+        'paymentStatus': 'paid',
+      });
+
+      // update end time for current trip in trips subcollection of the earnings collection in uid doc in firestore
+      await _firestore
+          .collection('earnings')
+          .doc(user!.uid)
+          .collection('trips')
+          .doc(tripId)
+          .update({
+        'endedAt': FieldValue.serverTimestamp(),
+      });
+    } on Exception catch (e) {
+      // TODO
+    }
+  }
+
+  Future<double> getTotalEarningsOfCurrentMonth() async {
+    DateTime now = DateTime.now();
+    DateTime firstDayOfCurrentMonth =
+        DateTime(now.year, now.month, 1, 0, 0, 0, 0, 0);
+    DateTime lastDayOfCurrentMonth =
+        DateTime(now.year, now.month + 1, 0, 23, 59, 59, 999, 999);
+
+    double totalEarningsOfCurrentMonth = 0;
+
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot;
+
+      snapshot = await _firestore
+          .collection('earnings')
+          .doc(user!.uid)
+          .collection('trips')
+          .where('acceptedAt', isGreaterThanOrEqualTo: firstDayOfCurrentMonth)
+          .where('acceptedAt', isLessThanOrEqualTo: lastDayOfCurrentMonth)
+          .get();
+
+      for (var doc in snapshot.docs) {
+        totalEarningsOfCurrentMonth += double.parse(doc['fareAmount']);
+      }
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+
+    return totalEarningsOfCurrentMonth;
+  }
+
+  Future<double> getTotalEarningsOfCurrentWeek() async {
+    DateTime now = DateTime.now();
+    DateTime firstDayOfCurrentWeek =
+        now.subtract(Duration(days: now.weekday - 1));
+    DateTime lastDayOfCurrentWeek = firstDayOfCurrentWeek.add(const Duration(
+        days: 6,
+        hours: 23,
+        minutes: 59,
+        seconds: 59,
+        milliseconds: 999,
+        microseconds: 999));
+
+    double totalEarningsOfCurrentWeek = 0;
+
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot;
+
+      snapshot = await _firestore
+          .collection('earnings')
+          .doc(user!.uid)
+          .collection('trips')
+          .where('acceptedAt', isGreaterThanOrEqualTo: firstDayOfCurrentWeek)
+          .where('acceptedAt', isLessThanOrEqualTo: lastDayOfCurrentWeek)
+          .get();
+
+      for (var doc in snapshot.docs) {
+        totalEarningsOfCurrentWeek += double.parse(doc['fareAmount']);
+      }
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+
+    return totalEarningsOfCurrentWeek;
+  }
+
+  Future<double> getTotalEarnedAmount() async {
+    double totalEarnings = 0;
+
+    try {
+      DocumentSnapshot doc =
+          await _firestore.collection('earnings').doc(user!.uid).get();
+
+      if (doc.exists) {
+        totalEarnings = double.parse(doc['totalEarnings'].toString());
+      }
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+
+    return totalEarnings;
   }
 }
