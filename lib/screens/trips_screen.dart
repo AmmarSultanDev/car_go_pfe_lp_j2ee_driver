@@ -49,7 +49,7 @@ class _TripsScreenState extends State<TripsScreen> {
                     fit: BoxFit.cover,
                   ),
                   const SizedBox(
-                    height: 200,
+                    height: 20,
                   ),
                   Expanded(
                       child: ListView.builder(
