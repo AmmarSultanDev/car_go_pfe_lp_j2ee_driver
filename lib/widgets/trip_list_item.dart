@@ -1,5 +1,6 @@
 import 'package:car_go_pfe_lp_j2ee_driver/models/ended_trip_details.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/providers/driver_provider.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/screens/trip_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
@@ -64,6 +65,9 @@ class TripListItem extends StatelessWidget {
         ],
       ),
       child: GestureDetector(
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                TripDetailsScreen(endedTripDetails: endedTripDetails))),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
           child: Stack(
@@ -100,7 +104,7 @@ class TripListItem extends StatelessWidget {
                     const SizedBox(height: 5),
                     Text(
                       endedTripDetails.passengerInfo?['displayName'],
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                       ),
                     ),
@@ -112,7 +116,7 @@ class TripListItem extends StatelessWidget {
                 right: 10,
                 child: Text(
                   _formatDate(endedTripDetails.endedAt!),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                   ),
                 ),

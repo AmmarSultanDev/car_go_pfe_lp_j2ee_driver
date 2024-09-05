@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart' as model;
 import 'package:car_go_pfe_lp_j2ee_driver/providers/driver_provider.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/providers/navigation_provider.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/earning_screen.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/home_screen.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/profile_screen.dart';
@@ -83,32 +84,39 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                     ProfileScreen(),
                   ],
                 ),
-                bottomNavigationBar: BottomNavigationBar(
-                  currentIndex: selectedIndex,
-                  selectedItemColor: Theme.of(context).primaryColor,
-                  unselectedItemColor: Theme.of(context).unselectedWidgetColor,
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  type: BottomNavigationBarType.fixed,
-                  onTap: onBarItemTap,
-                  items: const [
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.home),
-                      label: 'Home',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.monetization_on),
-                      label: 'Earnings',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.history),
-                      label: 'Trips',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.person),
-                      label: 'Profile',
-                    ),
-                  ],
-                ),
+                bottomNavigationBar: Consumer<NavigationProvider>(
+                    builder: (context, navigationProvider, child) {
+                  return BottomNavigationBar(
+                    currentIndex: navigationProvider.selectedIndex,
+                    selectedItemColor: Theme.of(context).primaryColor,
+                    unselectedItemColor:
+                        Theme.of(context).unselectedWidgetColor,
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    type: BottomNavigationBarType.fixed,
+                    onTap: (index) {
+                      navigationProvider.selectedIndex = index;
+                      tabController!.index = index;
+                    },
+                    items: const [
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.home),
+                        label: 'Home',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.monetization_on),
+                        label: 'Earnings',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.history),
+                        label: 'Trips',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.person),
+                        label: 'Profile',
+                      ),
+                    ],
+                  );
+                }),
               );
             }
           }

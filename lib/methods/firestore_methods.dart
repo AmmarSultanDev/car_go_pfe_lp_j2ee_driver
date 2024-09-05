@@ -318,7 +318,7 @@ class FirestoreMethods {
           .update({
         'endedAt': FieldValue.serverTimestamp(),
       });
-    } on Exception catch (e) {
+    } on Exception {
       // TODO
     }
   }

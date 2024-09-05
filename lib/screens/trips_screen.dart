@@ -59,7 +59,7 @@ class _TripsScreenState extends State<TripsScreen> {
                         return TripListItem(
                             endedTripDetails: endedTripDetails[index]);
                       } else {
-                        return Text('No trips found');
+                        return const Text('No trips found');
                       }
                     },
                   )),
