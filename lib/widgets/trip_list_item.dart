@@ -15,26 +15,27 @@ class TripListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Container(
-        height: 200,
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(24)),
-          color: Theme.of(context).canvasColor,
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).colorScheme.onPrimary,
-              blurRadius: 15.0,
-              spreadRadius: 0.5,
-              offset: const Offset(
-                0.7,
-                0.7,
-              ),
-            )
-          ],
-        ),
-        child: GestureDetector(
-          child: Image.network(locationImage),
+    return Container(
+      height: 200,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(24)),
+        color: Theme.of(context).canvasColor,
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.onPrimary,
+            blurRadius: 15.0,
+            spreadRadius: 0.5,
+            offset: const Offset(
+              0.7,
+              0.7,
+            ),
+          )
+        ],
+      ),
+      child: GestureDetector(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Image.network(locationImage, fit: BoxFit.cover),
         ),
       ),
     );
