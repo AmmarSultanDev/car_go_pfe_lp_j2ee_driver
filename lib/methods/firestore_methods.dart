@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/models/ended_trip_details.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/trip_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -408,5 +409,22 @@ class FirestoreMethods {
     }
 
     return totalEarnings;
+  }
+
+  Future<List<EndedTripDetails>>? getTrips() async {
+    // get the trips of the user from the earnings collection
+    QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
+        .collection('earnings')
+        .doc(user!.uid)
+        .collection('trips')
+        .get();
+
+    List<EndedTripDetails> trips = [];
+
+    for (var doc in snapshot.docs) {
+      trips.add(EndedTripDetails.fromSnapshot(doc.data()));
+    }
+
+    return trips;
   }
 }
