@@ -417,6 +417,7 @@ class FirestoreMethods {
         .collection('earnings')
         .doc(user!.uid)
         .collection('trips')
+        .orderBy('acceptedAt', descending: true)
         .get();
 
     List<EndedTripDetails> trips = [];

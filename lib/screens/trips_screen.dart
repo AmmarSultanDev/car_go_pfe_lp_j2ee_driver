@@ -31,42 +31,34 @@ class _TripsScreenState extends State<TripsScreen> {
           horizontal: 32,
         ),
         width: double.infinity,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height,
-              ),
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 100,
-                  ),
-                  Image.asset(
-                    'assets/images/trips.png',
-                    height: 200,
-                    fit: BoxFit.cover,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Expanded(
-                      child: ListView.builder(
-                    itemCount: endedTripDetails.length,
-                    itemBuilder: (ctx, index) {
-                      if (endedTripDetails.isNotEmpty) {
-                        return TripListItem(
-                            endedTripDetails: endedTripDetails[index]);
-                      } else {
-                        return const Text('No trips found');
-                      }
-                    },
-                  )),
-                ],
-              ),
+        child: ListView(
+          padding: const EdgeInsets.all(8.0),
+          children: [
+            const SizedBox(
+              height: 100,
             ),
-          ),
+            Image.asset(
+              'assets/images/trips.png',
+              height: 200,
+              fit: BoxFit.fitHeight,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: endedTripDetails.length,
+              itemBuilder: (ctx, index) {
+                if (endedTripDetails.isNotEmpty) {
+                  return TripListItem(
+                      endedTripDetails: endedTripDetails[index]);
+                } else {
+                  return const Text('No trips found');
+                }
+              },
+            ),
+          ],
         ),
       ),
     );

@@ -10,6 +10,7 @@ import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class TripDetailsScreen extends StatefulWidget {
@@ -37,9 +38,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
   Set<Polyline> polylines = {};
 
-  int tripDistance = 0;
+  String? tripDistance = '';
 
-  int tripDuration = 0;
+  String tripDuration = '';
+
+  String actualTripDuration = '';
 
   String tripCost = '';
 
@@ -47,14 +50,27 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
   setTripInfo() {
     setState(() {
-      tripDistance = tripDetailsInfo?.distanceValue ?? 0;
-      tripDuration = tripDetailsInfo?.durationValue ?? 0;
-      print('Fare amount: ${widget.endedTripDetails.fareAmout ?? 'null'}');
+      tripDistance = tripDetailsInfo?.distanceText ?? '';
+      tripDuration = tripDetailsInfo?.durationText ?? '';
+
       tripCost = widget.endedTripDetails.fareAmout ?? '0';
-      print('Trip distance: $tripDistance');
-      print('Trip duration: $tripDuration');
-      print('Trip cost: $tripCost');
+
+      // Calculate the actual trip duration
+      if (widget.endedTripDetails.startedAt != null &&
+          widget.endedTripDetails.endedAt != null) {
+        Duration duration = widget.endedTripDetails.endedAt!
+            .difference(widget.endedTripDetails.startedAt!);
+        actualTripDuration = formatDuration(duration);
+        print('Actual trip duration: $actualTripDuration');
+      }
     });
+  }
+
+  String formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
 
   drawRoute(LatLng start, LatLng end) async {
@@ -126,14 +142,14 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
       markerId: const MarkerId('startMarkerId'),
       position: start,
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-      infoWindow: const InfoWindow(title: 'Start'),
+      infoWindow: InfoWindow(title: widget.endedTripDetails.pickUpAddress),
     );
 
     Marker endMarker = Marker(
       markerId: const MarkerId('endMarkerId'),
       position: end,
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-      infoWindow: const InfoWindow(title: 'End'),
+      infoWindow: InfoWindow(title: widget.endedTripDetails.dropOffAddress),
     );
 
     setState(() {
@@ -169,6 +185,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     // in this screen the user can see the trip details
     // the trip details will include the trip date, the trip distance, the trip duration, the trip cost, and the trip path on the map
     // also the user can see the passenger details, his name and his phone number
+
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       body: Stack(
@@ -225,39 +243,48 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
             ),
           ),
           Positioned(
-            bottom: 10,
+            bottom: 30,
             right: 10,
             child: Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
+                border: Border.all(color: Colors.black87.withOpacity(0.2)),
+                color: isDarkMode
+                    ? Colors.black.withOpacity(0.5)
+                    : Colors.black.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Trip Date: ${widget.endedTripDetails.acceptedAt}',
-                    style: TextStyle(
+                    'Trip Date: ${DateFormat('yyyy-MM-dd – kk:mm').format(widget.endedTripDetails.acceptedAt!)}',
+                    style: const TextStyle(
                       fontSize: 16,
                     ),
                   ),
                   Text(
                     'Trip Distance: $tripDistance',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                     ),
                   ),
                   // Add more Text widgets for other trip details
                   Text(
-                    'Trip Duration: $tripDuration',
-                    style: TextStyle(
+                    'Estimated Duration: $tripDuration',
+                    style: const TextStyle(
                       fontSize: 16,
                     ),
                   ),
                   Text(
-                    'Trip Cost: $tripCost',
-                    style: TextStyle(
+                    'Trip Time: $actualTripDuration',
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    'Trip Cost: \$$tripCost',
+                    style: const TextStyle(
                       fontSize: 16,
                     ),
                   ),
