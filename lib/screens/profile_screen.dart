@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:typed_data';
+
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/providers/driver_provider.dart';
@@ -25,10 +27,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Driver? driver;
 
   bool isEditing = false;
-  TextEditingController? displayNameController;
-  TextEditingController? emailController;
-  TextEditingController? firstNameController;
-  TextEditingController? lastNameController;
+
+  TextEditingController? _displayNameController;
+  TextEditingController? _emailController;
+  TextEditingController? _phoneNumberController;
+  TextEditingController? _passwordController;
+  TextEditingController? _confirmPasswordController;
+  TextEditingController? _vehiculePlateNumberController;
+  TextEditingController? _vehiculeModelController;
+  TextEditingController? _vehiculeColorController;
+
+  Uint8List? _image;
+
+  CommonMethods commonMethods = const CommonMethods();
+
+  signUpFormValidation() {
+    if (_displayNameController!.text.trim().length < 3) {
+      commonMethods.displaySnackBar(
+        'Username must be at least 3 characters long!',
+        context,
+      );
+      return false;
+    } else if (_phoneNumberController!.text.trim().length < 10) {
+      commonMethods.displaySnackBar(
+        'Phone number must be at least 10 characters long!',
+        context,
+      );
+      return false;
+    } else if (!_emailController!.text.contains('@') ||
+        !_emailController!.text.contains('.')) {
+      commonMethods.displaySnackBar(
+        'Invalid email address!',
+        context,
+      );
+      return false;
+    } else if (_passwordController!.text.trim().length < 6) {
+      commonMethods.displaySnackBar(
+        'Password must be at least 6 characters long!',
+        context,
+      );
+      return false;
+    } else if (_passwordController!.text != _confirmPasswordController!.text) {
+      commonMethods.displaySnackBar(
+        'Passwords do not match!',
+        context,
+      );
+      return false;
+    } else if (_image == null) {
+      commonMethods.displaySnackBar(
+        'Please select a profile picture!',
+        context,
+      );
+      return false;
+    } else if (_vehiculePlateNumberController!.text.trim().length < 3) {
+      commonMethods.displaySnackBar(
+        'Vehicle number must be at least 3 characters long!',
+        context,
+      );
+      return false;
+    } else if (_vehiculeModelController!.text.trim().length < 3) {
+      commonMethods.displaySnackBar(
+        'Vehicle model must be at least 3 characters long!',
+        context,
+      );
+      return false;
+    } else if (_vehiculeColorController!.text.trim().length < 3) {
+      commonMethods.displaySnackBar(
+        'Vehicle color must be at least 3 characters long!',
+        context,
+      );
+      return false;
+    }
+  }
 
   @override
   void initState() {
@@ -41,8 +111,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     driver = Provider.of<DriverProvider>(context, listen: false).getUser;
-    displayNameController = TextEditingController(text: driver?.displayName);
-    emailController = TextEditingController(text: driver?.email);
+    _displayNameController = TextEditingController(text: driver?.displayName);
+    _emailController = TextEditingController(text: driver?.email);
   }
 
   signout() async {
@@ -188,13 +258,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     if (isEditing)
                       TextField(
-                        controller: displayNameController,
+                        controller: _displayNameController,
                       )
                     else
                       Text(driver!.displayName),
                     if (isEditing)
                       TextField(
-                        controller: emailController,
+                        controller: _emailController,
                       )
                     else
                       Text(driver!.email),

@@ -102,6 +102,38 @@ class AuthMethods {
     return res;
   }
 
+  Future<String> updateDriverInfo(
+    String? email,
+    String? password,
+    String? displayName,
+    String? phoneNumber,
+    String? vehiculeNumber,
+    String? vehiculeModel,
+    String? vehiculeColor,
+    Uint8List? file,
+    BuildContext context,
+  ) async {
+    String res = 'Something went wrong';
+
+    try {
+      User? currentUser = _auth.currentUser;
+
+      if (password != null && currentUser != null) {
+        await currentUser.updatePassword(password);
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        res = 'The password provided is too weak.';
+      } else if (e.code == 'email-already-in-use') {
+        res = 'The account already exists for that email.';
+      }
+    } on Exception catch (e) {
+      res = e.toString();
+    }
+
+    return res;
+  }
+
   // signin user
   Future<String> signinUser({
     required String email,
