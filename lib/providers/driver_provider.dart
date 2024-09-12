@@ -25,14 +25,4 @@ class DriverProvider with ChangeNotifier {
       notifyListeners();
     });
   }
-
-  updateProfile(Map<String, dynamic> data, BuildContext context) async {
-    model.Driver? user;
-    await _authMethods.updateDriverInfo(data, context);
-
-    Future.microtask(() {
-      _user = user;
-      notifyListeners();
-    });
-  }
 }

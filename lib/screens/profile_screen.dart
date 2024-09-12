@@ -19,9 +19,13 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String? totalTrips;
+
   String? totalDistance;
+
   String? totalTime;
+
   Driver? driver;
+
   bool isEditing = false;
 
   TextEditingController? _displayNameController;
@@ -38,30 +42,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
   CommonMethods commonMethods = const CommonMethods();
 
   signUpFormValidation() {
-    if (_displayNameController!.text != driver?.displayName &&
-        _displayNameController!.text.trim().length < 3) {
+    if (_displayNameController!.text.trim().length < 3) {
       commonMethods.displaySnackBar(
         'Username must be at least 3 characters long!',
         context,
       );
       return false;
-    } else if (_phoneNumberController!.text != driver?.phoneNumber &&
-        _phoneNumberController!.text.trim().length < 10) {
+    } else if (_phoneNumberController!.text.trim().length < 10) {
       commonMethods.displaySnackBar(
         'Phone number must be at least 10 characters long!',
         context,
       );
       return false;
-    } else if (_emailController!.text != driver?.email &&
-        (!_emailController!.text.contains('@') ||
-            !_emailController!.text.contains('.'))) {
+    } else if (!_emailController!.text.contains('@') ||
+        !_emailController!.text.contains('.')) {
       commonMethods.displaySnackBar(
         'Invalid email address!',
         context,
       );
       return false;
-    } else if (_passwordController!.text.isNotEmpty &&
-        _passwordController!.text.trim().length < 6) {
+    } else if (_passwordController!.text.trim().length < 6) {
       commonMethods.displaySnackBar(
         'Password must be at least 6 characters long!',
         context,
@@ -73,41 +73,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context,
       );
       return false;
-      // } else if (_image != driver?.photoUrl && _image == null) {
-      //   commonMethods.displaySnackBar(
-      //     'Please select a profile picture!',
-      //     context,
-      //   );
-      //   return false;
-    } else if (_vehiculePlateNumberController!.text !=
-            driver?.vehiculePlateNumber &&
-        _vehiculePlateNumberController!.text.trim().length < 3) {
+    } else if (_image == null) {
+      commonMethods.displaySnackBar(
+        'Please select a profile picture!',
+        context,
+      );
+      return false;
+    } else if (_vehiculePlateNumberController!.text.trim().length < 3) {
       commonMethods.displaySnackBar(
         'Vehicle number must be at least 3 characters long!',
         context,
       );
       return false;
-    } else if (_vehiculeModelController!.text != driver?.vehiculeModel &&
-        _vehiculeModelController!.text.trim().length < 3) {
+    } else if (_vehiculeModelController!.text.trim().length < 3) {
       commonMethods.displaySnackBar(
         'Vehicle model must be at least 3 characters long!',
         context,
       );
       return false;
-    } else if (_vehiculeColorController!.text != driver?.vehiculeColor &&
-        _vehiculeColorController!.text.trim().length < 3) {
+    } else if (_vehiculeColorController!.text.trim().length < 3) {
       commonMethods.displaySnackBar(
         'Vehicle color must be at least 3 characters long!',
         context,
       );
       return false;
     }
-    return true;
   }
 
   @override
   void initState() {
     super.initState();
+
     driver = Provider.of<DriverProvider>(context, listen: false).getUser;
   }
 
@@ -117,15 +113,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     driver = Provider.of<DriverProvider>(context, listen: false).getUser;
     _displayNameController = TextEditingController(text: driver?.displayName);
     _emailController = TextEditingController(text: driver?.email);
-    _phoneNumberController = TextEditingController(text: driver?.phoneNumber);
-    _passwordController = TextEditingController();
-    _confirmPasswordController = TextEditingController();
-    _vehiculePlateNumberController =
-        TextEditingController(text: driver?.vehiculePlateNumber);
-    _vehiculeModelController =
-        TextEditingController(text: driver?.vehiculeModel);
-    _vehiculeColorController =
-        TextEditingController(text: driver?.vehiculeColor);
   }
 
   signout() async {
@@ -152,10 +139,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(8.0),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          // first section, user informations
           children: [
             Card(
               elevation: 5,
@@ -165,83 +153,96 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: IntrinsicHeight(
                   child: Row(
                     children: [
-                      Flexible(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircleAvatar(
-                              radius: 50,
-                              backgroundImage: NetworkImage(driver!.photoUrl!),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              driver!.displayName,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              driver!.email,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          ],
-                        ),
+                      Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundImage: NetworkImage(driver!
+                                .photoUrl!), // Replace with the user's profile image URL
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            driver!.displayName,
+                            overflow: TextOverflow
+                                .ellipsis, // Replace with the user's name
+                            style: const TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            driver!.email,
+                            overflow: TextOverflow
+                                .ellipsis, // Replace with the user's email
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 5,
                       ),
                       Container(
-                        width: 1,
                         height: double.infinity,
-                        margin: const EdgeInsets.symmetric(horizontal: 10),
-                        color: Theme.of(context).dividerColor,
-                      ),
-                      Flexible(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Flexible(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Trips',
-                                    style: TextStyle(fontSize: 24),
-                                  ),
-                                  Text(totalTrips ?? '0'),
-                                ],
-                              ),
-                            ),
-                            Flexible(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Distance',
-                                    style: TextStyle(fontSize: 24),
-                                  ),
-                                  Text(totalDistance ?? '0'),
-                                ],
-                              ),
-                            ),
-                            Flexible(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Time',
-                                    style: TextStyle(fontSize: 24),
-                                  ),
-                                  Text(totalTime ?? '0'),
-                                ],
-                              ),
-                            ),
-                          ],
+                        child: VerticalDivider(
+                          color: Colors.transparent,
+                          thickness: 1,
+                          width: 20,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Theme.of(context).dividerColor,
+                              Colors.transparent,
+                            ],
+                          ),
                         ),
                       ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // total trips
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Trips',
+                                style: TextStyle(fontSize: 24),
+                              ),
+                              Text(totalTrips ?? '0'),
+                            ],
+                          ),
+                          // total distance
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Distance',
+                                style: TextStyle(fontSize: 24),
+                              ),
+                              Text(totalTrips ?? '0'),
+                            ],
+                          ),
+                          // total time
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Time',
+                                style: TextStyle(fontSize: 24),
+                              ),
+                              Text(totalTrips ?? '0'),
+                            ],
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),
@@ -253,129 +254,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
               color: Theme.of(context).cardColor.withOpacity(0.2),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  height: 420,
-                  child: ListView.builder(
-                    itemCount: 1,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              height: 60,
-                              child: isEditing
-                                  ? TextField(
-                                      controller: _displayNameController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Name'),
-                                    )
-                                  : Text(driver!.displayName)),
-                          Container(
-                              height: 60,
-                              child: isEditing
-                                  ? TextField(
-                                      controller: _emailController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Email'),
-                                    )
-                                  : Text(driver!.email)),
-                          Container(
-                              height: 60,
-                              child: isEditing
-                                  ? TextField(
-                                      controller: _phoneNumberController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Phone Number'),
-                                    )
-                                  : Text(driver!.phoneNumber)),
-                          Container(
-                              height: 60,
-                              child: isEditing
-                                  ? TextField(
-                                      controller: _passwordController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Password'),
-                                    )
-                                  : const Text('********')),
-                          Container(
-                              height: 60,
-                              child: isEditing
-                                  ? TextField(
-                                      controller: _confirmPasswordController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Confirm Password'),
-                                    )
-                                  : const Text('********')),
-                          Container(
-                              height: 60,
-                              child: isEditing
-                                  ? TextField(
-                                      controller:
-                                          _vehiculePlateNumberController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Vehicle Plate Number'),
-                                    )
-                                  : Text(driver!.vehiculePlateNumber)),
-                          Container(
-                              height: 60,
-                              child: isEditing
-                                  ? TextField(
-                                      controller: _vehiculeModelController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Vehicle Model'),
-                                    )
-                                  : Text(driver!.vehiculeModel)),
-                          Container(
-                              height: 60,
-                              child: isEditing
-                                  ? TextField(
-                                      controller: _vehiculeColorController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Vehicle Color'),
-                                    )
-                                  : Text(driver!.vehiculeColor)),
-                          if (isEditing)
-                            ElevatedButton(
-                              onPressed: () async {
-                                if (signUpFormValidation()) {
-                                  showDialog(
-                                      context: context,
-                                      builder: (ctx) => const LoadingDialog(
-                                          messageText: 'Updating profile...'));
-
-                                  await Provider.of<DriverProvider>(context,
-                                          listen: false)
-                                      .updateProfile({
-                                    'displayName': _displayNameController!.text,
-                                    'email': _emailController!.text,
-                                    'phoneNumber': _phoneNumberController!.text,
-                                    'vehiculePlateNumber':
-                                        _vehiculePlateNumberController!.text,
-                                    'vehiculeModel':
-                                        _vehiculeModelController!.text,
-                                    'vehiculeColor':
-                                        _vehiculeColorController!.text,
-                                    'file': _image,
-                                  }, context);
-
-                                  if (mounted) Navigator.of(context).pop();
-                                }
-                              },
-                              child: const Text('Update Profile'),
-                            ),
-                          if (!isEditing)
-                            ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  isEditing = true;
-                                });
-                              },
-                              child: const Text('Edit Profile'),
-                            ),
-                        ],
-                      );
-                    },
-                  ),
+                child: Column(
+                  children: [
+                    if (isEditing)
+                      TextField(
+                        controller: _displayNameController,
+                      )
+                    else
+                      Text(driver!.displayName),
+                    if (isEditing)
+                      TextField(
+                        controller: _emailController,
+                      )
+                    else
+                      Text(driver!.email),
+                    if (isEditing) TextField(),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          isEditing = !isEditing;
+                        });
+                      },
+                      child: Text(isEditing ? 'Save' : 'Edit'),
+                    ),
+                  ],
                 ),
               ),
             ),

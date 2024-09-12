@@ -49,4 +49,3 @@ lib/firebase_options.dart
 android/app/src/main/AndroidManifest.xml
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
-ios/Runner/AppDelegate.swift

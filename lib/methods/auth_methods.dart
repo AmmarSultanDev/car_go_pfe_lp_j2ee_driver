@@ -103,28 +103,34 @@ class AuthMethods {
   }
 
   Future<String> updateDriverInfo(
-    Map<String, dynamic> data,
+    String? email,
+    String? password,
+    String? displayName,
+    String? phoneNumber,
+    String? vehiculeNumber,
+    String? vehiculeModel,
+    String? vehiculeColor,
+    Uint8List? file,
     BuildContext context,
   ) async {
-    String res = 'Some error occured';
+    String res = 'Something went wrong';
+
     try {
       User? currentUser = _auth.currentUser;
-      if (currentUser != null) {
-        await _firestore
-            .collection('drivers')
-            .doc(currentUser.uid)
-            .update(data);
-        DocumentSnapshot snap =
-            await _firestore.collection('drivers').doc(currentUser.uid).get();
-        model.Driver? user = model.Driver.fromSnap(snap);
-        if (context.mounted) {
-          Provider.of<DriverProvider>(context, listen: false).setUser = user!;
-          res = 'Success';
-        }
+
+      if (password != null && currentUser != null) {
+        await currentUser.updatePassword(password);
       }
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        res = 'The password provided is too weak.';
+      } else if (e.code == 'email-already-in-use') {
+        res = 'The account already exists for that email.';
+      }
+    } on Exception catch (e) {
       res = e.toString();
     }
+
     return res;
   }
 
