@@ -9,6 +9,7 @@ import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:provider/provider.dart';
+import 'package:restart/restart.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -358,6 +359,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   }, context);
 
                                   if (mounted) Navigator.of(context).pop();
+
+                                  restart();
                                 }
                               },
                               child: const Text('Update Profile'),
