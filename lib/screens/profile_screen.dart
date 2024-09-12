@@ -134,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (mounted) Navigator.of(context).pop();
 
-    await AuthMethods().signoutUser();
+    await AuthMethods().signoutUser(context);
   }
 
   selectImage() async {
@@ -159,11 +159,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         _image = im;
       });
+      updateProfilePicture(im);
     }
   }
 
-  uploadImage() async {
-    String res = await AuthMethods().updateDriverPhoto(_image!);
+  updateProfilePicture(Uint8List image) async {
+    showDialog(
+        context: context,
+        builder: (context) =>
+            const LoadingDialog(messageText: 'Uploading new image...'));
+    String res = await AuthMethods().updateDriverPhoto(image);
+
+    if (mounted) Navigator.of(context).pop();
 
     if (res == 'success') {
       commonMethods.displaySnackBar(
@@ -415,15 +422,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     context,
                                     listen: false)
                                 .updateProfile({
-                              'displayName': _displayNameController!.text,
-                              'email': _emailController!.text,
-                              'phoneNumber': _phoneNumberController!.text,
-                              'password': _passwordController!.text,
+                              'displayName': _displayNameController!.text ==
+                                      driver?.displayName
+                                  ? ''
+                                  : _displayNameController!.text,
+                              'email': _emailController!.text == driver?.email
+                                  ? ''
+                                  : _emailController!.text,
+                              'phoneNumber': _phoneNumberController!.text ==
+                                      driver?.phoneNumber
+                                  ? ''
+                                  : _phoneNumberController!.text,
+                              'password': _passwordController!.text.isEmpty
+                                  ? ''
+                                  : _passwordController!.text,
                               'vehiculePlateNumber':
-                                  _vehiculePlateNumberController!.text,
-                              'vehiculeModel': _vehiculeModelController!.text,
-                              'vehiculeColor': _vehiculeColorController!.text,
-                            }, context, _image ?? null);
+                                  _vehiculePlateNumberController!.text ==
+                                          driver?.vehiculePlateNumber
+                                      ? ''
+                                      : _vehiculePlateNumberController!.text,
+                              'vehiculeModel': _vehiculeModelController!.text ==
+                                      driver?.vehiculeModel
+                                  ? ''
+                                  : _vehiculeModelController!.text,
+                              'vehiculeColor': _vehiculeColorController!.text ==
+                                      driver?.vehiculeColor
+                                  ? ''
+                                  : _vehiculeColorController!.text,
+                            }, context);
 
                             if (mounted) Navigator.of(context).pop();
 
@@ -433,6 +459,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               setState(() {
                                 isEditing = false;
                               });
+
+                              await Future.delayed(const Duration(seconds: 3));
+
+                              restart();
                             } else if (result == 'email-verification-sent') {
                               commonMethods.displaySnackBar(
                                   'Email verification link sent. Please verify your email',
@@ -461,7 +491,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             isEditing = true;
                           });
                         },
-                        child: const Text('Edit Profile'),
+                        child: const Text('Edit Infos'),
                       ),
                   ],
                 ),

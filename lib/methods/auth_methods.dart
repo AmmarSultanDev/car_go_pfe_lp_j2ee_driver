@@ -2,6 +2,7 @@ import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/storage_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart' as model;
 import 'package:car_go_pfe_lp_j2ee_driver/providers/driver_provider.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/providers/navigation_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -106,19 +107,12 @@ class AuthMethods {
 
   Future<String> updateDriverInfo(
     Map<String, dynamic> data,
-    Uint8List? file,
     BuildContext context,
   ) async {
     String res = 'Some error occured';
     try {
       User? currentUser = _auth.currentUser;
       if (currentUser != null) {
-        if (file != null) {
-          String photoUrl = await StorageMethods()
-              .uploadImageToStorage('driversProfilePics', file);
-          data['photoUrl'] = photoUrl;
-        }
-
         if (data['email'] != '') {
           try {
             await currentUser.verifyBeforeUpdateEmail(data['email']);
@@ -142,6 +136,10 @@ class AuthMethods {
             await currentUser.updatePassword(data['password']);
 
             res = 'success';
+
+            data.remove('password');
+
+            return res;
           } on FirebaseAuthException catch (e) {
             if (e.code == 'weak-password') {
               res = 'The password provided is too weak.';
@@ -246,9 +244,12 @@ class AuthMethods {
   }
 
   // signout user
-  Future<void> signoutUser() async {
+  Future<void> signoutUser(BuildContext context) async {
     if (_auth.currentUser != null) {
       const CommonMethods().saveDriverStatus(false);
+
+      Provider.of<NavigationProvider>(context, listen: false).selectedIndex = 0;
+
       await _auth.signOut();
     }
   }

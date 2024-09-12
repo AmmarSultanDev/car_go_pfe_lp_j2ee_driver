@@ -32,10 +32,9 @@ class DriverProvider with ChangeNotifier {
   }
 
   Future<String> updateProfile(
-      Map<String, dynamic> data, BuildContext context, Uint8List? file) async {
+      Map<String, dynamic> data, BuildContext context) async {
     model.Driver? user;
-    String res =
-        await _authMethods.updateDriverInfo(data, file ?? null, context);
+    String res = await _authMethods.updateDriverInfo(data, context);
 
     if (res == 'success') {
       user = await _authMethods.getUserDetails();
