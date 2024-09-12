@@ -122,6 +122,10 @@ class AuthMethods {
         if (data['email'] != '') {
           try {
             await currentUser.verifyBeforeUpdateEmail(data['email']);
+
+            res = 'email-verification-sent';
+
+            return res;
           } on FirebaseAuthException catch (e) {
             if (e.code == 'email-already-in-use') {
               res = 'The account already exists for that email.';
@@ -131,12 +135,13 @@ class AuthMethods {
           } on Exception catch (e) {
             res = e.toString();
           }
-          data.remove('email');
         }
 
         if (data['password'] != '') {
           try {
             await currentUser.updatePassword(data['password']);
+
+            res = 'success';
           } on FirebaseAuthException catch (e) {
             if (e.code == 'weak-password') {
               res = 'The password provided is too weak.';

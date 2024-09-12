@@ -399,7 +399,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 builder: (ctx) => const LoadingDialog(
                                     messageText: 'Updating profile...'));
 
-                            bool result = await Provider.of<DriverProvider>(
+                            String result = await Provider.of<DriverProvider>(
                                     context,
                                     listen: false)
                                 .updateProfile({
@@ -415,7 +415,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                             if (mounted) Navigator.of(context).pop();
 
-                            if (result) restart();
+                            if (result == 'success') {
+                              commonMethods.displaySnackBar(
+                                  'Profile updated successfully', context);
+                              setState(() {
+                                isEditing = false;
+                              });
+                            } else if (result == 'email-verification-sent') {
+                              commonMethods.displaySnackBar(
+                                  'Email verification link sent. Please verify your email',
+                                  context);
+
+                              await Future.delayed(const Duration(seconds: 3));
+
+                              restart();
+                            } else {
+                              commonMethods.displaySnackBar(result, context);
+                            }
                           }
                         },
                         child: const Text('Update Profile'),

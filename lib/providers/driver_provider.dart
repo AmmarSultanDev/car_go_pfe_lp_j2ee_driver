@@ -9,6 +9,8 @@ class DriverProvider with ChangeNotifier {
   model.Driver? _user;
   final AuthMethods _authMethods = AuthMethods();
 
+  final CommonMethods _commonMethods = const CommonMethods();
+
   model.Driver? get getUser => _user;
 
   Future<model.Driver?> refreshUser() async {
@@ -29,7 +31,7 @@ class DriverProvider with ChangeNotifier {
     });
   }
 
-  Future<bool> updateProfile(
+  Future<String> updateProfile(
       Map<String, dynamic> data, BuildContext context, Uint8List? file) async {
     model.Driver? user;
     String res =
@@ -42,14 +44,12 @@ class DriverProvider with ChangeNotifier {
         _user = user;
         notifyListeners();
 
-        return true;
+        return res;
       });
-    } else {
-      CommonMethods().displaySnackBar(res, context);
-
-      return false;
+    } else if (res == 'email-verification-sent') {
+      return res;
     }
 
-    return false;
+    return res;
   }
 }
