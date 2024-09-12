@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart' as model;
 import 'package:flutter/material.dart';
 
@@ -26,13 +29,27 @@ class DriverProvider with ChangeNotifier {
     });
   }
 
-  updateProfile(Map<String, dynamic> data, BuildContext context) async {
+  Future<bool> updateProfile(
+      Map<String, dynamic> data, BuildContext context, Uint8List? file) async {
     model.Driver? user;
-    await _authMethods.updateDriverInfo(data, context);
+    String res =
+        await _authMethods.updateDriverInfo(data, file ?? null, context);
 
-    Future.microtask(() {
-      _user = user;
-      notifyListeners();
-    });
+    if (res == 'success') {
+      user = await _authMethods.getUserDetails();
+
+      Future.microtask(() {
+        _user = user;
+        notifyListeners();
+
+        return true;
+      });
+    } else {
+      CommonMethods().displaySnackBar(res, context);
+
+      return false;
+    }
+
+    return false;
   }
 }

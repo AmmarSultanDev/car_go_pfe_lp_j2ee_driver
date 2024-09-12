@@ -56,7 +56,7 @@ class AuthMethods {
 
         if (userCredential.user != null) {
           String photoUrl = await StorageMethods()
-              .uploadImageToStorage('driversProfilePics', file, false);
+              .uploadImageToStorage('driversProfilePics', file);
 
           model.Driver user = model.Driver(
             uid: userCredential.user!.uid,
@@ -104,12 +104,50 @@ class AuthMethods {
 
   Future<String> updateDriverInfo(
     Map<String, dynamic> data,
+    Uint8List? file,
     BuildContext context,
   ) async {
     String res = 'Some error occured';
     try {
       User? currentUser = _auth.currentUser;
       if (currentUser != null) {
+        if (file != null) {
+          String photoUrl = await StorageMethods()
+              .uploadImageToStorage('driversProfilePics', file);
+          data['photoUrl'] = photoUrl;
+        }
+
+        if (data['email'] != '') {
+          try {
+            await currentUser.verifyBeforeUpdateEmail(data['email']);
+          } on FirebaseAuthException catch (e) {
+            if (e.code == 'email-already-in-use') {
+              res = 'The account already exists for that email.';
+            } else if (e.code == 'invalid-email') {
+              res = 'The email address is badly formatted.';
+            }
+          } on Exception catch (e) {
+            res = e.toString();
+          }
+          data.remove('email');
+        }
+
+        if (data['password'] != '') {
+          try {
+            await currentUser.updatePassword(data['password']);
+          } on FirebaseAuthException catch (e) {
+            if (e.code == 'weak-password') {
+              res = 'The password provided is too weak.';
+            } else if (e.code == 'requires-recent-login') {
+              res =
+                  'The user must reauthenticate before this operation can be executed.';
+            }
+          } on Exception catch (e) {
+            res = e.toString();
+          }
+          data.remove('password');
+        }
+
         await _firestore
             .collection('drivers')
             .doc(currentUser.uid)
@@ -119,7 +157,7 @@ class AuthMethods {
         model.Driver? user = model.Driver.fromSnap(snap);
         if (context.mounted) {
           Provider.of<DriverProvider>(context, listen: false).setUser = user!;
-          res = 'Success';
+          res = 'success';
         }
       }
     } catch (e) {

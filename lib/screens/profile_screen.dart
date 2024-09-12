@@ -8,6 +8,7 @@ import 'package:car_go_pfe_lp_j2ee_driver/providers/driver_provider.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:restart/restart.dart';
 
@@ -74,12 +75,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context,
       );
       return false;
-      // } else if (_image != driver?.photoUrl && _image == null) {
-      //   commonMethods.displaySnackBar(
-      //     'Please select a profile picture!',
-      //     context,
-      //   );
-      //   return false;
     } else if (_vehiculePlateNumberController!.text !=
             driver?.vehiculePlateNumber &&
         _vehiculePlateNumberController!.text.trim().length < 3) {
@@ -141,6 +136,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await AuthMethods().signoutUser();
   }
 
+  selectImage() async {
+    // Show a loading spinner while the image picker is running
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) =>
+          const LoadingDialog(messageText: 'Loading image...'),
+    );
+
+    await commonMethods.askForPhotosPermission();
+
+    // Run the image picker operation
+    Uint8List? im = await commonMethods.pickImage(ImageSource.gallery);
+
+    // Dismiss the loading spinner
+    Navigator.of(context).pop();
+
+    // Update the state with the selected image
+    if (im != null) {
+      setState(() {
+        _image = im;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -170,9 +190,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            CircleAvatar(
-                              radius: 50,
-                              backgroundImage: NetworkImage(driver!.photoUrl!),
+                            Stack(
+                              children: [
+                                _image != null
+                                    ? CircleAvatar(
+                                        radius: 50,
+                                        backgroundImage: MemoryImage(_image!),
+                                      )
+                                    : CircleAvatar(
+                                        radius: 50,
+                                        backgroundImage:
+                                            NetworkImage(driver!.photoUrl!),
+                                      ),
+                                Positioned(
+                                  bottom: -10,
+                                  right: -10,
+                                  child: IconButton(
+                                    onPressed: selectImage,
+                                    icon: const Icon(Icons.camera_alt),
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 16),
                             Text(
@@ -254,130 +292,144 @@ class _ProfileScreenState extends State<ProfileScreen> {
               color: Theme.of(context).cardColor.withOpacity(0.2),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  height: 420,
-                  child: ListView.builder(
-                    itemCount: 1,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              height: 60,
-                              child: isEditing
-                                  ? TextField(
-                                      controller: _displayNameController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Name'),
-                                    )
-                                  : Text(driver!.displayName)),
-                          Container(
-                              height: 60,
-                              child: isEditing
-                                  ? TextField(
-                                      controller: _emailController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Email'),
-                                    )
-                                  : Text(driver!.email)),
-                          Container(
-                              height: 60,
-                              child: isEditing
-                                  ? TextField(
-                                      controller: _phoneNumberController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Phone Number'),
-                                    )
-                                  : Text(driver!.phoneNumber)),
-                          Container(
-                              height: 60,
-                              child: isEditing
-                                  ? TextField(
-                                      controller: _passwordController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Password'),
-                                    )
-                                  : const Text('********')),
-                          Container(
-                              height: 60,
-                              child: isEditing
-                                  ? TextField(
-                                      controller: _confirmPasswordController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Confirm Password'),
-                                    )
-                                  : const Text('********')),
-                          Container(
-                              height: 60,
-                              child: isEditing
-                                  ? TextField(
-                                      controller:
-                                          _vehiculePlateNumberController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Vehicle Plate Number'),
-                                    )
-                                  : Text(driver!.vehiculePlateNumber)),
-                          Container(
-                              height: 60,
-                              child: isEditing
-                                  ? TextField(
-                                      controller: _vehiculeModelController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Vehicle Model'),
-                                    )
-                                  : Text(driver!.vehiculeModel)),
-                          Container(
-                              height: 60,
-                              child: isEditing
-                                  ? TextField(
-                                      controller: _vehiculeColorController,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Vehicle Color'),
-                                    )
-                                  : Text(driver!.vehiculeColor)),
-                          if (isEditing)
-                            ElevatedButton(
-                              onPressed: () async {
-                                if (signUpFormValidation()) {
-                                  showDialog(
-                                      context: context,
-                                      builder: (ctx) => const LoadingDialog(
-                                          messageText: 'Updating profile...'));
+                child: Column(
+                  children: [
+                    Container(
+                      height: 360,
+                      child: ListView.builder(
+                        itemCount: 1,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                  height: 60,
+                                  child: isEditing
+                                      ? TextField(
+                                          controller: _displayNameController,
+                                          decoration: const InputDecoration(
+                                              labelText: 'Name'),
+                                        )
+                                      : Text(driver!.displayName)),
+                              Container(
+                                  height: 60,
+                                  child: isEditing
+                                      ? TextField(
+                                          keyboardType:
+                                              TextInputType.emailAddress,
+                                          controller: _emailController,
+                                          decoration: const InputDecoration(
+                                              labelText: 'Email'),
+                                        )
+                                      : Text(driver!.email)),
+                              Container(
+                                  height: 60,
+                                  child: isEditing
+                                      ? TextField(
+                                          controller: _phoneNumberController,
+                                          decoration: const InputDecoration(
+                                              labelText: 'Phone Number'),
+                                        )
+                                      : Text(driver!.phoneNumber)),
+                              Container(
+                                  height: 60,
+                                  child: isEditing
+                                      ? TextField(
+                                          obscureText: true,
+                                          controller: _passwordController,
+                                          decoration: const InputDecoration(
+                                              labelText: 'Password'),
+                                        )
+                                      : const Text('********')),
+                              Container(
+                                  height: 60,
+                                  child: isEditing
+                                      ? TextField(
+                                          obscureText: true,
+                                          controller:
+                                              _confirmPasswordController,
+                                          decoration: const InputDecoration(
+                                              labelText: 'Confirm Password'),
+                                        )
+                                      : const Text('********')),
+                              Container(
+                                  height: 60,
+                                  child: isEditing
+                                      ? TextField(
+                                          controller:
+                                              _vehiculePlateNumberController,
+                                          decoration: const InputDecoration(
+                                              labelText:
+                                                  'Vehicle Plate Number'),
+                                        )
+                                      : Text(driver!.vehiculePlateNumber)),
+                              Container(
+                                  height: 60,
+                                  child: isEditing
+                                      ? TextField(
+                                          controller: _vehiculeModelController,
+                                          decoration: const InputDecoration(
+                                              labelText: 'Vehicle Model'),
+                                        )
+                                      : Text(driver!.vehiculeModel)),
+                              Container(
+                                  height: 60,
+                                  child: isEditing
+                                      ? TextField(
+                                          controller: _vehiculeColorController,
+                                          decoration: const InputDecoration(
+                                              labelText: 'Vehicle Color'),
+                                        )
+                                      : Text(driver!.vehiculeColor)),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
 
-                                  await Provider.of<DriverProvider>(context,
-                                          listen: false)
-                                      .updateProfile({
-                                    'displayName': _displayNameController!.text,
-                                    'email': _emailController!.text,
-                                    'phoneNumber': _phoneNumberController!.text,
-                                    'vehiculePlateNumber':
-                                        _vehiculePlateNumberController!.text,
-                                    'vehiculeModel':
-                                        _vehiculeModelController!.text,
-                                    'vehiculeColor':
-                                        _vehiculeColorController!.text,
-                                  }, context);
+                    const SizedBox(height: 16),
 
-                                  if (mounted) Navigator.of(context).pop();
+                    // Edit and Save buttons
+                    if (isEditing)
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (signUpFormValidation()) {
+                            showDialog(
+                                context: context,
+                                builder: (ctx) => const LoadingDialog(
+                                    messageText: 'Updating profile...'));
 
-                                  restart();
-                                }
-                              },
-                              child: const Text('Update Profile'),
-                            ),
-                          if (!isEditing)
-                            ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  isEditing = true;
-                                });
-                              },
-                              child: const Text('Edit Profile'),
-                            ),
-                        ],
-                      );
-                    },
-                  ),
+                            bool result = await Provider.of<DriverProvider>(
+                                    context,
+                                    listen: false)
+                                .updateProfile({
+                              'displayName': _displayNameController!.text,
+                              'email': _emailController!.text,
+                              'phoneNumber': _phoneNumberController!.text,
+                              'password': _passwordController!.text,
+                              'vehiculePlateNumber':
+                                  _vehiculePlateNumberController!.text,
+                              'vehiculeModel': _vehiculeModelController!.text,
+                              'vehiculeColor': _vehiculeColorController!.text,
+                            }, context, _image ?? null);
+
+                            if (mounted) Navigator.of(context).pop();
+
+                            if (result) restart();
+                          }
+                        },
+                        child: const Text('Update Profile'),
+                      ),
+                    if (!isEditing)
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            isEditing = true;
+                          });
+                        },
+                        child: const Text('Edit Profile'),
+                      ),
+                  ],
                 ),
               ),
             ),
