@@ -110,7 +110,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
     if (mounted) Navigator.of(context).pop();
 
-    if (res != 'Success') {
+    if (res != 'success') {
       if (!context.mounted) return;
       commonMethods.displaySnackBar(res, context);
     } else {

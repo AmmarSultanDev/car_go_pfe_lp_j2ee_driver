@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/providers/driver_provider.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/widgets/info_dialog.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
@@ -158,6 +159,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         _image = im;
       });
+    }
+  }
+
+  uploadImage() async {
+    String res = await AuthMethods().updateDriverPhoto(_image!);
+
+    if (res == 'success') {
+      commonMethods.displaySnackBar(
+          'Profile picture updated successfully', context);
+    } else {
+      commonMethods.displaySnackBar(res, context);
     }
   }
 
@@ -439,6 +451,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     if (!isEditing)
                       ElevatedButton(
                         onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => const InfoDialog(
+                                  title: 'Notice',
+                                  content:
+                                      'To change your email or password, you must update them individually.\n Other profile details can be modified together in a single update.'));
                           setState(() {
                             isEditing = true;
                           });

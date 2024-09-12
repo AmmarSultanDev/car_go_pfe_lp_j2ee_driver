@@ -87,7 +87,7 @@ class AuthMethods {
           if (context.mounted) {
             Provider.of<DriverProvider>(context, listen: false).setUser = user;
 
-            res = 'Success';
+            res = 'success';
             return res;
           }
         }
@@ -217,6 +217,31 @@ class AuthMethods {
         res = err.toString();
       }
     }
+    return res;
+  }
+
+  Future<String> updateDriverPhoto(Uint8List file) async {
+    String res = 'Some error occured';
+    User? currentUser = _auth.currentUser;
+
+    // uploadImageToStorage
+
+    String photoUrl =
+        await StorageMethods().uploadImageToStorage('driversProfilePics', file);
+
+    if (currentUser != null) {
+      try {
+        await _firestore
+            .collection('drivers')
+            .doc(currentUser.uid)
+            .update({'photoUrl': photoUrl});
+
+        res = 'success';
+      } on Exception catch (e) {
+        res = e.toString();
+      }
+    }
+
     return res;
   }
 
