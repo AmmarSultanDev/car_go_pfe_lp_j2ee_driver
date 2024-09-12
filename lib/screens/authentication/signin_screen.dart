@@ -23,8 +23,13 @@ class _SigninScreenState extends State<SigninScreen> {
       password: _passwordController.text.trim(),
     );
 
-    if (res != 'Success') {
-      if (context.mounted) {
+    if (res != 'success') {
+      if (res == 'email-not-verified') {
+        commonMethods.displaySnackBar(
+            'Email not verified. Please verify your email', context);
+
+        await AuthMethods().signoutUser();
+      } else {
         commonMethods.displaySnackBar(res, context);
       }
     }
@@ -105,7 +110,8 @@ class _SigninScreenState extends State<SigninScreen> {
                               onPressed: () {
                                 Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
-                                        builder: (context) => const SignupScreen()));
+                                        builder: (context) =>
+                                            const SignupScreen()));
                               },
                               child: const Text(
                                 'Sign Up',

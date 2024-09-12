@@ -54,6 +54,8 @@ class AuthMethods {
         UserCredential userCredential = await _auth
             .createUserWithEmailAndPassword(email: email, password: password);
 
+        await _auth.currentUser!.sendEmailVerification();
+
         if (userCredential.user != null) {
           String photoUrl = await StorageMethods()
               .uploadImageToStorage('driversProfilePics', file);
@@ -176,6 +178,15 @@ class AuthMethods {
       if (email.isNotEmpty && password.isNotEmpty) {
         UserCredential userCredential = await _auth.signInWithEmailAndPassword(
             email: email, password: password);
+
+        if (!userCredential.user!.emailVerified) {
+          res = 'email-not-verified';
+
+          // await _auth.signOut();
+
+          return res;
+        }
+
         if (userCredential.user != null) {
           DocumentSnapshot snap = await _firestore
               .collection('drivers')
@@ -186,7 +197,7 @@ class AuthMethods {
             await _auth.signOut();
             res = 'Your account has been blocked';
           } else {
-            res = 'Success';
+            res = 'success';
           }
         }
       } else {
