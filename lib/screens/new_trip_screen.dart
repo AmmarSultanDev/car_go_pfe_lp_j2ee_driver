@@ -328,7 +328,6 @@ class _NewTripScreenState extends State<NewTripScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     listenToTripRequestStatus();
@@ -336,7 +335,6 @@ class _NewTripScreenState extends State<NewTripScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     tripRequestStreamSubscription!.cancel();
   }
@@ -624,8 +622,6 @@ class _NewTripScreenState extends State<NewTripScreen> {
                                             widget.tripDetails.tripId!,
                                             'arrived')
                                         .then((value) async {
-                                      print(value);
-
                                       setState(() {
                                         statusOfTrip = 'arrived';
                                         buttonTitle = 'Start Trip';

@@ -1,15 +1,10 @@
-import 'dart:typed_data';
-
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart' as model;
 import 'package:flutter/material.dart';
 
 class DriverProvider with ChangeNotifier {
   model.Driver? _user;
   final AuthMethods _authMethods = AuthMethods();
-
-  final CommonMethods _commonMethods = const CommonMethods();
 
   model.Driver? get getUser => _user;
 

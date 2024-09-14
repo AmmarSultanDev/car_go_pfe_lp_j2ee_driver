@@ -7,6 +7,7 @@ import 'package:car_go_pfe_lp_j2ee_driver/models/direction_details.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/ended_trip_details.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/providers/navigation_provider.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -61,7 +62,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
         Duration duration = widget.endedTripDetails.endedAt!
             .difference(widget.endedTripDetails.startedAt!);
         actualTripDuration = formatDuration(duration);
-        print('Actual trip duration: $actualTripDuration');
+        if (kDebugMode) {
+          print('Actual trip duration: $actualTripDuration');
+        }
       }
     });
   }

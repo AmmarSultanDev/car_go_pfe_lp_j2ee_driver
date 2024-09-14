@@ -172,7 +172,6 @@ class _HomeScreenState extends State<HomeScreen>
 
   setDriverAvailability() {
     commonMethods.loadDriverStatus().then((isOnline) {
-      print('isOnline: $isOnline');
       if (isOnline && isDriverAvailableServerSide) {
         setState(() {
           driverStatusColor = Colors.red;

@@ -291,7 +291,9 @@ class FirestoreMethods {
             .delete();
       }
     } on Exception catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 
@@ -319,7 +321,9 @@ class FirestoreMethods {
         'endedAt': FieldValue.serverTimestamp(),
       });
     } on Exception {
-      // TODO
+      if (kDebugMode) {
+        print('Error confirming payment');
+      }
     }
   }
 

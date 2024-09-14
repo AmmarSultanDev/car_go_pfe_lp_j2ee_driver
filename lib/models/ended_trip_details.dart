@@ -31,7 +31,6 @@ class EndedTripDetails {
       this.destinationCoordinates});
 
   EndedTripDetails.fromSnapshot(Map<String, dynamic> snapshot) {
-    print(snapshot);
     double dropOffLat = double.parse(
         snapshot['dropOffLocationCoordinates']['latitude'].toString());
     double dropOffLng = double.parse(

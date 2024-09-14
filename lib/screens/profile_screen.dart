@@ -313,7 +313,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    Container(
+                    SizedBox(
                       height: 360,
                       child: ListView.builder(
                         itemCount: 1,
@@ -321,7 +321,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
+                              SizedBox(
                                   height: 60,
                                   child: isEditing
                                       ? TextField(
@@ -330,7 +330,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               labelText: 'Name'),
                                         )
                                       : Text(driver!.displayName)),
-                              Container(
+                              SizedBox(
                                   height: 60,
                                   child: isEditing
                                       ? TextField(
@@ -341,7 +341,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               labelText: 'Email'),
                                         )
                                       : Text(driver!.email)),
-                              Container(
+                              SizedBox(
                                   height: 60,
                                   child: isEditing
                                       ? TextField(
@@ -350,7 +350,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               labelText: 'Phone Number'),
                                         )
                                       : Text(driver!.phoneNumber)),
-                              Container(
+                              SizedBox(
                                   height: 60,
                                   child: isEditing
                                       ? TextField(
@@ -360,7 +360,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               labelText: 'Password'),
                                         )
                                       : const Text('********')),
-                              Container(
+                              SizedBox(
                                   height: 60,
                                   child: isEditing
                                       ? TextField(
@@ -371,7 +371,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               labelText: 'Confirm Password'),
                                         )
                                       : const Text('********')),
-                              Container(
+                              SizedBox(
                                   height: 60,
                                   child: isEditing
                                       ? TextField(
@@ -382,7 +382,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                   'Vehicle Plate Number'),
                                         )
                                       : Text(driver!.vehiculePlateNumber)),
-                              Container(
+                              SizedBox(
                                   height: 60,
                                   child: isEditing
                                       ? TextField(
@@ -391,7 +391,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               labelText: 'Vehicle Model'),
                                         )
                                       : Text(driver!.vehiculeModel)),
-                              Container(
+                              SizedBox(
                                   height: 60,
                                   child: isEditing
                                       ? TextField(
