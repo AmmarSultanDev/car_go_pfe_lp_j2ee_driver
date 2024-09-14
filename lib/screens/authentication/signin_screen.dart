@@ -28,6 +28,8 @@ class _SigninScreenState extends State<SigninScreen> {
         commonMethods.displaySnackBar(
             'Email not verified. Please verify your email', context);
 
+        await Future.delayed(const Duration(seconds: 3));
+
         await AuthMethods().signoutUser(context);
       } else {
         commonMethods.displaySnackBar(res, context);

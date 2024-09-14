@@ -55,6 +55,8 @@ class MainApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => NavigationProvider()),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'CarGoDriver',
         theme: ThemeData(
           primaryColor: AppColors.lightPrimary,
           scaffoldBackgroundColor: AppColors.lightSurface,
