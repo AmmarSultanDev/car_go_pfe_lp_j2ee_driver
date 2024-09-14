@@ -62,7 +62,6 @@ class _NotificationDialogState extends State<NotificationDialog> {
 
     if (requestAnswer) {
       if (mounted) Navigator.of(context).pop();
-      // TODO request accepted
       if (kDebugMode) {
         print('Request accepted');
       }

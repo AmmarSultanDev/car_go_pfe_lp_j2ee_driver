@@ -20,7 +20,6 @@ class TripListItem extends StatelessWidget {
         .displayName[0]
         .toUpperCase();
 
-    print(label);
     return 'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng=&zoom=16&size=600x300&maptype=roadmap&markers=color:red%7Clabel:$label%7C$lat,$lng&key=${dotenv.env['GOOGLE_MAPS_NO_RESTRICTION_API_KEY']}';
   }
 

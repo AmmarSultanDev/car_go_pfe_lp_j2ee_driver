@@ -93,8 +93,10 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
                       commonMethods.playFairAmountReceivedSound();
 
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop();
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      }
 
                       commonMethods.resumeLocationUpdates();
                     },
