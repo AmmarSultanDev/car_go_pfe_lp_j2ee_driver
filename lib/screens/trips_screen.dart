@@ -45,19 +45,30 @@ class _TripsScreenState extends State<TripsScreen> {
             const SizedBox(
               height: 20,
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: endedTripDetails.length,
-              itemBuilder: (ctx, index) {
-                if (endedTripDetails.isNotEmpty) {
-                  return TripListItem(
-                      endedTripDetails: endedTripDetails[index]);
-                } else {
-                  return const Text('No trips found');
-                }
-              },
-            ),
+            endedTripDetails.isEmpty
+                ? const Column(
+                    children: [
+                      SizedBox(
+                        height: 200,
+                      ),
+                      Center(
+                        child: Text('No trips found'),
+                      ),
+                    ],
+                  )
+                : ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: endedTripDetails.length,
+                    itemBuilder: (ctx, index) {
+                      if (endedTripDetails.isNotEmpty) {
+                        return TripListItem(
+                            endedTripDetails: endedTripDetails[index]);
+                      } else {
+                        return const Text('No trips found');
+                      }
+                    },
+                  ),
           ],
         ),
       ),
