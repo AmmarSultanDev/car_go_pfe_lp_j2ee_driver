@@ -35,7 +35,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   Widget? plateNumberTextField;
 
-  FocusNode plateNumberFocusNode = FocusNode();
+  FocusNode _plateNumberFocusNode = FocusNode();
 
   signUpFormValidation() {
     if (_usernameController.text.trim().length < 3) {
@@ -158,6 +158,23 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _plateNumberFocusNode.addListener(() {
+      if (!_plateNumberFocusNode.hasFocus) {
+        String reversedText =
+            _vehicleNumberController.text.split('').reversed.join();
+        _vehicleNumberController.text = reversedText;
+        _vehicleNumberController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _vehicleNumberController.text.length),
+        );
+      }
+    });
+  }
+
+  @override
   void dispose() {
     super.dispose();
     _usernameController.dispose();
@@ -168,6 +185,7 @@ class _SignupScreenState extends State<SignupScreen> {
     _vehicleNumberController.dispose();
     _vehicleModelController.dispose();
     _vehicleColorController.dispose();
+    _plateNumberFocusNode.dispose();
   }
 
   @override
@@ -178,7 +196,7 @@ class _SignupScreenState extends State<SignupScreen> {
     }
 
     plateNumberTextField = TextField(
-      focusNode: plateNumberFocusNode,
+      focusNode: _plateNumberFocusNode,
       controller: _vehicleNumberController,
       keyboardType: TextInputType.text,
       textDirection: TextDirection.rtl,
@@ -282,7 +300,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       GestureDetector(
                         onTap: () async {
                           if (isPlateNumberTextFieldFirstTap) {
-                            plateNumberFocusNode.unfocus();
+                            _plateNumberFocusNode.unfocus();
                             await showDialog(
                               context: context,
                               builder: (context) => const InfoDialog(
@@ -292,7 +310,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                             ).then((_) {
                               // Request focus for the TextField after the dialog is dismissed
-                              plateNumberFocusNode.requestFocus();
+                              _plateNumberFocusNode.requestFocus();
                             });
                             setState(() {
                               isPlateNumberTextFieldFirstTap = false;
