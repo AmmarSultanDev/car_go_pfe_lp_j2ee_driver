@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/authentication/signin_screen.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/widgets/info_dialog.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,6 +30,12 @@ class _SignupScreenState extends State<SignupScreen> {
   Uint8List? _image;
 
   CommonMethods commonMethods = const CommonMethods();
+
+  bool isPlateNumberTextFieldFirstTap = true;
+
+  Widget? plateNumberTextField;
+
+  FocusNode plateNumberFocusNode = FocusNode();
 
   signUpFormValidation() {
     if (_usernameController.text.trim().length < 3) {
@@ -170,6 +177,18 @@ class _SignupScreenState extends State<SignupScreen> {
       await commonMethods.checkConnectivity(context);
     }
 
+    plateNumberTextField = TextField(
+      focusNode: plateNumberFocusNode,
+      controller: _vehicleNumberController,
+      keyboardType: TextInputType.text,
+      textDirection: TextDirection.rtl,
+      textAlign: TextAlign.left,
+      decoration: const InputDecoration(
+        labelText: 'Vehicle plate number',
+        hintText: '12345 - \u200Eب\u200E - 67',
+      ),
+    );
+
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.symmetric(
@@ -260,15 +279,35 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      TextField(
-                        controller: _vehicleNumberController,
-                        keyboardType: TextInputType.text,
-                        textDirection: TextDirection.rtl,
-                        textAlign: TextAlign.left,
-                        decoration: const InputDecoration(
-                          labelText: 'Vehicle plate number',
-                          hintText: 'Enter your vehicle plate number',
-                        ),
+                      GestureDetector(
+                        onTap: () async {
+                          if (isPlateNumberTextFieldFirstTap) {
+                            plateNumberFocusNode.unfocus();
+                            await showDialog(
+                              context: context,
+                              builder: (context) => const InfoDialog(
+                                title: 'Notice',
+                                content:
+                                    'Please enter your vehicle plate number in the following format: 12345 - \u200Eب\u200E - 67',
+                              ),
+                            ).then((_) {
+                              // Request focus for the TextField after the dialog is dismissed
+                              plateNumberFocusNode.requestFocus();
+                            });
+                            setState(() {
+                              isPlateNumberTextFieldFirstTap = false;
+                            });
+                          }
+                        },
+                        child: isPlateNumberTextFieldFirstTap
+                            ? const TextField(
+                                enabled: false,
+                                decoration: InputDecoration(
+                                  labelText: 'Vehicle plate number',
+                                  hintText: '12345 - \u200Eب\u200E - 67',
+                                ),
+                              )
+                            : plateNumberTextField,
                       ),
                       const SizedBox(height: 10),
                       TextField(

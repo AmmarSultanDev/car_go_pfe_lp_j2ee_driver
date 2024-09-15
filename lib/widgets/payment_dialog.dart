@@ -21,7 +21,6 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
   @override
   Widget build(BuildContext context) {
-    updateTripStatusToEnded();
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -90,6 +89,8 @@ class _PaymentDialogState extends State<PaymentDialog> {
                     onPressed: () async {
                       await FirestoreMethods()
                           .confirmPayment(widget.tripDetails.tripId!);
+
+                      await updateTripStatusToEnded();
 
                       commonMethods.playFairAmountReceivedSound();
 

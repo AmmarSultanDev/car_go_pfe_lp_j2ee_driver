@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:car_go_pfe_lp_j2ee_driver/global/global_var.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/ended_trip_details.dart';
@@ -319,6 +320,7 @@ class FirestoreMethods {
           .doc(tripId)
           .update({
         'endedAt': FieldValue.serverTimestamp(),
+        'status': 'ended',
       });
     } on Exception {
       if (kDebugMode) {
@@ -345,6 +347,7 @@ class FirestoreMethods {
           .collection('trips')
           .where('acceptedAt', isGreaterThanOrEqualTo: firstDayOfCurrentMonth)
           .where('acceptedAt', isLessThanOrEqualTo: lastDayOfCurrentMonth)
+          .where('endedAt', isNull: false)
           .get();
 
       for (var doc in snapshot.docs) {
@@ -382,6 +385,7 @@ class FirestoreMethods {
           .collection('trips')
           .where('acceptedAt', isGreaterThanOrEqualTo: firstDayOfCurrentWeek)
           .where('acceptedAt', isLessThanOrEqualTo: lastDayOfCurrentWeek)
+          .where('endedAt', isNull: false)
           .get();
 
       for (var doc in snapshot.docs) {
@@ -421,6 +425,7 @@ class FirestoreMethods {
         .collection('earnings')
         .doc(user!.uid)
         .collection('trips')
+        .where('endedAt', isNull: false)
         .orderBy('acceptedAt', descending: true)
         .get();
 
@@ -431,5 +436,108 @@ class FirestoreMethods {
     }
 
     return trips;
+  }
+
+  Future<int> getTripsCount() async {
+    // get the trips of the user from the earnings collection
+    QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
+        .collection('earnings')
+        .doc(user!.uid)
+        .collection('trips')
+        .where('endedAt', isNull: false)
+        .get();
+
+    return snapshot.docs.length;
+  }
+
+  // get the total time spent on trips
+  Future<int> getTotalTimeSpentOnTrips() async {
+    int totalTimeSpentOnTrips = 0;
+
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
+          .collection('earnings')
+          .doc(user!.uid)
+          .collection('trips')
+          .where('endedAt', isNull: false)
+          .get();
+
+      for (var doc in snapshot.docs) {
+        if (doc['startedAt'] != null && doc['endedAt'] != null) {
+          DateTime startedAt = doc['startedAt'].toDate();
+          DateTime endedAt = doc['endedAt'].toDate();
+
+          totalTimeSpentOnTrips += endedAt.difference(startedAt).inMinutes;
+        }
+      }
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+
+    return totalTimeSpentOnTrips;
+  }
+
+  // get the total distance covered on trips
+  Future<double> getTotalDistanceCoveredOnTrips() async {
+    double totalDistanceCoveredOnTrips = 0;
+
+    print(user!.uid);
+
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
+          .collection('earnings')
+          .doc(user!.uid)
+          .collection('trips')
+          .where('endedAt', isNull: false)
+          .get();
+
+      for (var doc in snapshot.docs) {
+        if (doc['pickUpLocationCoordinates'] != null &&
+            doc['dropOffLocationCoordinates'] != null) {
+          LatLng pickupLocationCoordinates = LatLng(
+            double.parse(doc['pickUpLocationCoordinates']['latitude']),
+            double.parse(doc['pickUpLocationCoordinates']['longitude']),
+          );
+          LatLng dropOffLocationCoordinates = LatLng(
+            double.parse(doc['dropOffLocationCoordinates']['latitude']),
+            double.parse(doc['dropOffLocationCoordinates']['longitude']),
+          );
+
+          totalDistanceCoveredOnTrips += distanceBetween(
+            pickupLocationCoordinates.latitude,
+            pickupLocationCoordinates.longitude,
+            dropOffLocationCoordinates.latitude,
+            dropOffLocationCoordinates.longitude,
+          );
+        }
+      }
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+
+    return totalDistanceCoveredOnTrips;
+  }
+
+  distanceBetween(double startLatitude, double startLongitude,
+      double endLatitude, double endLongitude) {
+    const double pi = 3.1415926535897932;
+    const double earthRadius = 6371.0;
+
+    double dLat = (endLatitude - startLatitude) * (pi / 180.0);
+    double dLon = (endLongitude - startLongitude) * (pi / 180.0);
+
+    double a = (0.5 -
+            cos(dLat) / 2 +
+            cos(startLatitude * (pi / 180.0)) *
+                cos(endLatitude * (pi / 180.0)) *
+                (1 - cos(dLon)) /
+                2) *
+        2;
+
+    return earthRadius * 2 * asin(sqrt(a));
   }
 }

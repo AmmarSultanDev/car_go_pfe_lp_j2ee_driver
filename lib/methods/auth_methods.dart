@@ -113,7 +113,7 @@ class AuthMethods {
     try {
       User? currentUser = _auth.currentUser;
       if (currentUser != null) {
-        if (data['email'] != '') {
+        if (data['email'] != currentUser.email) {
           try {
             await currentUser.verifyBeforeUpdateEmail(data['email']);
 
@@ -131,7 +131,7 @@ class AuthMethods {
           }
         }
 
-        if (data['password'] != '') {
+        if (data['password'] != null) {
           try {
             await currentUser.updatePassword(data['password']);
 
