@@ -3,8 +3,11 @@
 import 'dart:typed_data';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/providers/driver_provider.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/authentication/signin_screen.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/info_dialog.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/widgets/info_dialog_with_image.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -119,17 +122,37 @@ class _SignupScreenState extends State<SignupScreen> {
     if (res != 'success') {
       if (!context.mounted) return;
       commonMethods.displaySnackBar(res, context);
-    }
-    // else {
-    //   await commonMethods.askForLocationPermission();
-    //   await commonMethods.askForNotificationPermission();
+    } else {
+      Driver? driver = await AuthMethods().getUserDetails();
 
-    //   Navigator.of(context).pushReplacement(
-    //     MaterialPageRoute(
-    //       builder: (context) => const Dashboard(),
-    //     ),
-    //   );
-    // }
+      if (driver == null) {
+        commonMethods.displaySnackBar(
+            'An error occurred. Please try again.', context);
+        return;
+      }
+
+      await showDialog(
+          context: context,
+          builder: (context) => InfoDialogWithImage(
+                title: 'Welcome ${_usernameController.text}',
+                content:
+                    'Your account has been created successfully. Please check your email for verification.',
+                imageUrl: driver.photoUrl,
+              ));
+
+      // Delay for 3 seconds before asking for location and notification permissions
+
+      Future.delayed(const Duration(seconds: 3), () {});
+
+      await commonMethods.askForLocationPermission();
+      await commonMethods.askForNotificationPermission();
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const SigninScreen(),
+        ),
+      );
+    }
   }
 
   selectImage() async {

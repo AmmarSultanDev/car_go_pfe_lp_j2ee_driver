@@ -116,9 +116,7 @@ class MainApp extends StatelessWidget {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return const Center(
-                      child: Text('Error in asking for location permission'),
-                    );
+                    return const SigninScreen();
                   } else {
                     return FutureBuilder(
                       future:
@@ -129,10 +127,7 @@ class MainApp extends StatelessWidget {
                           return const Center(
                               child: CircularProgressIndicator());
                         } else if (snapshot.hasError) {
-                          return const Center(
-                            child: Text(
-                                'Error in asking for notifications permission'),
-                          );
+                          return const SigninScreen();
                         } else {
                           return StreamBuilder<DocumentSnapshot>(
                             stream: FirebaseFirestore.instance
@@ -147,22 +142,24 @@ class MainApp extends StatelessWidget {
                                   child: CircularProgressIndicator(),
                                 );
                               } else if (snapshot.hasError) {
-                                return const Center(
-                                  child: Text('Something went wrong!'),
-                                );
+                                return const SigninScreen();
                               } else if (snapshot.hasData) {
-                                model.Driver? user =
+                                model.Driver? driver =
                                     model.Driver.fromSnap(snapshot.data!);
                                 Provider.of<DriverProvider>(context,
                                         listen: false)
-                                    .setUser = user!;
+                                    .setUser = driver!;
 
                                 bool isBlocked =
                                     snapshot.data!.get('isBlocked') as bool;
                                 if (isBlocked) {
                                   return const BlockedScreen(); // return a screen for blocked users
                                 } else {
-                                  return const Dashboard(); // return the dashboard if the user is not blocked
+                                  if (user.emailVerified) {
+                                    return const Dashboard(); // return the dashboard if the user is not blocked
+                                  } else {
+                                    return const SigninScreen(); // return the sign in screen if the user is not authenticated
+                                  }
                                 }
                               } else {
                                 return const Center(

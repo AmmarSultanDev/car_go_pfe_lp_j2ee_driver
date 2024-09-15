@@ -3,6 +3,7 @@
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/authentication/signup_screen.dart';
+import 'package:car_go_pfe_lp_j2ee_driver/screens/dashboard.dart';
 import 'package:flutter/material.dart';
 
 class SigninScreen extends StatefulWidget {
@@ -34,6 +35,11 @@ class _SigninScreenState extends State<SigninScreen> {
       } else {
         commonMethods.displaySnackBar(res, context);
       }
+    }
+
+    if (res == 'success') {
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const Dashboard()));
     }
   }
 

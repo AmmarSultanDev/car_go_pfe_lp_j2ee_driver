@@ -48,10 +48,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void splitPlateNumber(String plateNumber) {
     var splittedPlateNumber = [];
+    plateNumber = plateNumber.replaceAll(' ', ''); // Remove all spaces
     splittedPlateNumber = plateNumber.split('-');
-    _plateNumberDigits = splittedPlateNumber[0];
-    _plateNumberLetter = splittedPlateNumber[1];
-    _plateNumberCityCodeCode = splittedPlateNumber[2];
+
+    for (String part in splittedPlateNumber) {
+      if (part.length > 2 && part.length <= 5 && part.contains(RegExp(r'\d'))) {
+        _plateNumberDigits = part;
+      } else if (part.contains(RegExp(r'[ء-ي]'))) {
+        _plateNumberLetter = part;
+      } else if (part.length <= 2 && part.contains(RegExp(r'\d'))) {
+        _plateNumberCityCodeCode = part;
+      }
+    }
   }
 
   signUpFormValidation() {
@@ -498,6 +506,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // Edit and Save buttons
                     if (isEditing)
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           ElevatedButton(
                             onPressed: () {
@@ -505,8 +514,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 isEditing = false;
                               });
                             },
-                            child: const Text('Cancel'),
+                            child: const Text('Cancel',
+                                style: TextStyle(color: Colors.red)),
                           ),
+                          const SizedBox(width: 16),
                           ElevatedButton(
                             onPressed: () async {
                               if (signUpFormValidation()) {
