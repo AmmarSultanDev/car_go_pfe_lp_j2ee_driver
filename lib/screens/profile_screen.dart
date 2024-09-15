@@ -219,6 +219,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     setCounters();
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -237,6 +238,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Card(
               elevation: 5,
               color: Theme.of(context).cardColor.withOpacity(0.2),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(
+                    color: isDarkMode
+                        ? Colors.black.withOpacity(0.5)
+                        : Colors.black.withOpacity(0.2),
+                  )),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: IntrinsicHeight(
@@ -346,6 +354,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Card(
               elevation: 5,
               color: Theme.of(context).cardColor.withOpacity(0.2),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(
+                    color: isDarkMode
+                        ? Colors.black.withOpacity(0.5)
+                        : Colors.black.withOpacity(0.2),
+                  )),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
