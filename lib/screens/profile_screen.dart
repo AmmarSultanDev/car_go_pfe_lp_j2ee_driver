@@ -8,7 +8,6 @@ import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/providers/driver_provider.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/info_dialog.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/loading_dialog.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:image_picker/image_picker.dart';
@@ -600,7 +599,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   await Future.delayed(
                                       const Duration(seconds: 3));
 
-                                  restart();
+                                  await const CommonMethods()
+                                      .goOfflinePermanently(context);
+
+                                  await AuthMethods().signoutUser(context);
                                 } else {
                                   commonMethods.displaySnackBar(
                                       result, context);
