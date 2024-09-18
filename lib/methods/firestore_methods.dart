@@ -483,7 +483,9 @@ class FirestoreMethods {
   Future<double> getTotalDistanceCoveredOnTrips() async {
     double totalDistanceCoveredOnTrips = 0;
 
-    print(user!.uid);
+    if (kDebugMode) {
+      print(user!.uid);
+    }
 
     try {
       QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore

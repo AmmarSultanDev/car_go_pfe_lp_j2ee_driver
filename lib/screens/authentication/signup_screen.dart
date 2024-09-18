@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/auth_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/methods/common_methods.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/models/driver.dart';
-import 'package:car_go_pfe_lp_j2ee_driver/providers/driver_provider.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/screens/authentication/signin_screen.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/info_dialog.dart';
 import 'package:car_go_pfe_lp_j2ee_driver/widgets/info_dialog_with_image.dart';
@@ -38,7 +37,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   Widget? plateNumberTextField;
 
-  FocusNode _plateNumberFocusNode = FocusNode();
+  final FocusNode _plateNumberFocusNode = FocusNode();
 
   signUpFormValidation() {
     if (_usernameController.text.trim().length < 3) {
@@ -182,7 +181,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     _plateNumberFocusNode.addListener(() {
