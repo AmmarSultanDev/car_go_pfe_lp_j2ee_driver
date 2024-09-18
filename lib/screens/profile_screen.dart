@@ -377,45 +377,111 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
-                                  height: 60,
-                                  child: isEditing
-                                      ? TextField(
-                                          controller: _displayNameController,
-                                          decoration: const InputDecoration(
-                                              labelText: 'Name'),
-                                        )
-                                      : Text(driver!.displayName,
-                                          style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold))),
+                                height: 55,
+                                child: isEditing
+                                    ? TextField(
+                                        controller: _displayNameController,
+                                        decoration: const InputDecoration(
+                                            labelText: 'Name'),
+                                      )
+                                    : Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.2),
+                                                blurRadius: 5,
+                                                spreadRadius: 0.5,
+                                                offset: const Offset(0.7, 0.7),
+                                              )
+                                            ]),
+                                        child: ListTile(
+                                          leading: const Icon(Icons.person),
+                                          title: Text(driver!.displayName,
+                                              style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w500)),
+                                        ),
+                                      ),
+                              ),
+                              const SizedBox(
+                                height: 6,
+                              ),
                               SizedBox(
-                                  height: 60,
-                                  child: isEditing
-                                      ? TextField(
-                                          keyboardType:
-                                              TextInputType.emailAddress,
-                                          controller: _emailController,
-                                          decoration: const InputDecoration(
-                                              labelText: 'Email'),
-                                        )
-                                      : Text(driver!.email,
-                                          style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold))),
+                                height: 55,
+                                child: isEditing
+                                    ? TextField(
+                                        keyboardType:
+                                            TextInputType.emailAddress,
+                                        controller: _emailController,
+                                        decoration: const InputDecoration(
+                                            labelText: 'Email'),
+                                      )
+                                    : Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.2),
+                                                blurRadius: 5,
+                                                spreadRadius: 0.5,
+                                                offset: const Offset(0.7, 0.7),
+                                              )
+                                            ]),
+                                        child: ListTile(
+                                          leading: const Icon(Icons.email),
+                                          title: Text(driver!.email,
+                                              style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500)),
+                                        ),
+                                      ),
+                              ),
+                              const SizedBox(
+                                height: 6,
+                              ),
                               SizedBox(
-                                  height: 60,
-                                  child: isEditing
-                                      ? TextField(
-                                          controller: _phoneNumberController,
-                                          decoration: const InputDecoration(
-                                              labelText: 'Phone Number'),
-                                        )
-                                      : Text(driver!.phoneNumber,
-                                          style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold))),
+                                height: 55,
+                                child: isEditing
+                                    ? TextField(
+                                        controller: _phoneNumberController,
+                                        decoration: const InputDecoration(
+                                            labelText: 'Phone Number'),
+                                      )
+                                    : Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.2),
+                                                blurRadius: 5,
+                                                spreadRadius: 0.5,
+                                                offset: const Offset(0.7, 0.7),
+                                              )
+                                            ]),
+                                        child: ListTile(
+                                          leading: const Icon(Icons.phone),
+                                          title: Text(driver!.phoneNumber,
+                                              style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w500)),
+                                        ),
+                                      ),
+                              ),
+                              const SizedBox(
+                                height: 6,
+                              ),
                               SizedBox(
-                                  height: 60,
+                                  height: 55,
                                   child: isEditing
                                       ? TextField(
                                           obscureText: true,
@@ -423,10 +489,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           decoration: const InputDecoration(
                                               labelText: 'Password'),
                                         )
-                                      : const Text('********',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold))),
+                                      : Container(
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.2),
+                                                  blurRadius: 5,
+                                                  spreadRadius: 0.5,
+                                                  offset:
+                                                      const Offset(0.7, 0.7),
+                                                )
+                                              ]),
+                                          child: const ListTile(
+                                            leading: Icon(Icons.lock),
+                                            title: Text('********',
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.w500)),
+                                          ),
+                                        )),
                               !isEditing
                                   ? const SizedBox(
                                       height: 0,
@@ -438,7 +524,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         controller: _confirmPasswordController,
                                         decoration: const InputDecoration(
                                             labelText: 'Confirm Password'),
-                                      )),
+                                      ),
+                                    ),
+                              const SizedBox(
+                                height: 6,
+                              ),
                               SizedBox(
                                   height: 60,
                                   child: isEditing
@@ -451,68 +541,148 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         )
                                       :
                                       // give it the design of a car plate number
-                                      Stack(children: [
-                                          Positioned(
-                                              child: Image.asset(
-                                                  'assets/images/plate_number_holder.png',
-                                                  width: 200,
-                                                  height: 50,
-                                                  fit: BoxFit.fill)),
-                                          Positioned(
-                                            left: 20,
-                                            top: 10,
-                                            child: Text(
-                                                _plateNumberDigits ?? '',
-                                                style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
+                                      Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 6, horizontal: 18),
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.2),
+                                                  blurRadius: 5,
+                                                  spreadRadius: 0.5,
+                                                  offset:
+                                                      const Offset(0.7, 0.7),
+                                                )
+                                              ]),
+                                          child: Row(
+                                            children: [
+                                              const Icon(Icons.abc),
+                                              const SizedBox(
+                                                width: 4,
+                                              ),
+                                              Stack(children: [
+                                                Positioned(
+                                                    child: Image.asset(
+                                                        'assets/images/plate_number_holder.png',
+                                                        width: 200,
+                                                        height: 50,
+                                                        fit: BoxFit.fill)),
+                                                Positioned(
+                                                  left: 20,
+                                                  top: 10,
+                                                  child: Text(
+                                                    _plateNumberDigits ?? '',
+                                                    style: const TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.black87,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                  top: 10,
+                                                  left: 120,
+                                                  child: Text(
+                                                    _plateNumberLetter ?? '',
+                                                    style: const TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.black87,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                  top: 10,
+                                                  left: 160,
+                                                  child: Text(
+                                                    _plateNumberCityCodeCode ??
+                                                        '',
+                                                    style: const TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.black87,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                              ]),
+                                            ],
                                           ),
-                                          Positioned(
-                                            top: 10,
-                                            left: 120,
-                                            child: Text(
-                                                _plateNumberLetter ?? '',
-                                                style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          ),
-                                          Positioned(
-                                            top: 10,
-                                            left: 160,
-                                            child: Text(
-                                                _plateNumberCityCodeCode ?? '',
-                                                style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          ),
-                                        ])),
+                                        )),
+                              const SizedBox(
+                                height: 6,
+                              ),
                               SizedBox(
-                                  height: 60,
+                                  height: 55,
                                   child: isEditing
                                       ? TextField(
                                           controller: _vehiculeModelController,
                                           decoration: const InputDecoration(
                                               labelText: 'Vehicle Model'),
                                         )
-                                      : Text(driver!.vehiculeModel,
-                                          style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold))),
+                                      : Container(
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.2),
+                                                  blurRadius: 5,
+                                                  spreadRadius: 0.5,
+                                                  offset:
+                                                      const Offset(0.7, 0.7),
+                                                )
+                                              ]),
+                                          child: ListTile(
+                                            leading: const Icon(
+                                                Icons.directions_car),
+                                            title: Text(driver!.vehiculeModel,
+                                                style: const TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.w500)),
+                                          ),
+                                        )),
+                              const SizedBox(
+                                height: 6,
+                              ),
                               SizedBox(
-                                  height: 60,
+                                  height: 55,
                                   child: isEditing
                                       ? TextField(
                                           controller: _vehiculeColorController,
                                           decoration: const InputDecoration(
                                               labelText: 'Vehicle Color'),
                                         )
-                                      : Text(driver!.vehiculeColor,
-                                          style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold))),
+                                      : Container(
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.2),
+                                                  blurRadius: 5,
+                                                  spreadRadius: 0.5,
+                                                  offset:
+                                                      const Offset(0.7, 0.7),
+                                                )
+                                              ]),
+                                          child: ListTile(
+                                            leading: const Icon(Icons.brush),
+                                            title: Text(driver!.vehiculeColor,
+                                                style: const TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.w500)),
+                                          ),
+                                        )),
                             ],
                           );
                         },

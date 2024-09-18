@@ -74,15 +74,18 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                   child: Text('No user data found')); // Handle null user here
             } else {
               return Scaffold(
-                body: TabBarView(
-                  controller: tabController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: const [
-                    HomeScreen(),
-                    EarningScreen(),
-                    TripsScreen(),
-                    ProfileScreen(),
-                  ],
+                backgroundColor: Colors.transparent,
+                body: SafeArea(
+                  child: TabBarView(
+                    controller: tabController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: const [
+                      HomeScreen(),
+                      EarningScreen(),
+                      TripsScreen(),
+                      ProfileScreen(),
+                    ],
+                  ),
                 ),
                 bottomNavigationBar: Consumer<NavigationProvider>(
                     builder: (context, navigationProvider, child) {
