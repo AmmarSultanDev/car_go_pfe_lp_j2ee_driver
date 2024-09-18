@@ -101,6 +101,12 @@ class CommonMethods {
           await Geofire.removeLocation(currentUser.uid);
         }
       }
+
+      const CommonMethods().loadDriverStatus().then((isOnline) async {
+        if (isOnline) {
+          await const CommonMethods().saveDriverStatus(false);
+        }
+      });
     } catch (e) {
       if (ctx.mounted) displaySnackBar('Error: $e', ctx);
     }

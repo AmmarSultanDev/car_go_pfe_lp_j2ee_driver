@@ -92,11 +92,17 @@ class TripListItem extends StatelessWidget {
                             : Colors.black.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Text(
-                        endedTripDetails.dropOffAddress!,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: 290,
+                        ),
+                        child: Text(
+                          overflow: TextOverflow.ellipsis,
+                          endedTripDetails.dropOffAddress!,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),

@@ -90,6 +90,8 @@ class _HomeScreenState extends State<HomeScreen>
         await FirestoreMethods().getDriverAvailabilityStatus();
 
     if (isDriverAvailableServerSide == true) {
+      Geofire.initialize('onlineDrivers');
+      isGeofireInitialized = true;
       setState(() {
         driverStatusColor = Colors.red;
         driverStatusText = 'Go Offline';
@@ -201,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen>
       children: [
         GoogleMap(
           padding: Platform.isAndroid
-              ? const EdgeInsets.only(top: 55, right: 10)
+              ? const EdgeInsets.only(top: 35, right: 10)
               : const EdgeInsets.only(bottom: 16, right: 28, left: 16),
           myLocationButtonEnabled: true,
           zoomControlsEnabled: false,
@@ -220,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen>
 
         // go online offline container
         Positioned(
-          top: 61,
+          top: 41,
           left: 0,
           right: 0,
           child: Row(

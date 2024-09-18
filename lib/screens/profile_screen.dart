@@ -154,13 +154,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     await const CommonMethods().goOfflinePermanently(context);
 
-    if (mounted) Navigator.of(context).pop();
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (context.mounted) Navigator.of(context).pop();
 
     await AuthMethods().signoutUser(context);
 
-    await Future.delayed(const Duration(seconds: 3));
+    // await Future.delayed(const Duration(seconds: 3));
 
-    await restart();
+    // await restart();
   }
 
   selectImage() async {
