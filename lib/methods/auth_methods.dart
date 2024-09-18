@@ -61,7 +61,7 @@ class AuthMethods {
           String photoUrl = await StorageMethods()
               .uploadImageToStorage('driversProfilePics', file);
 
-          model.Driver user = model.Driver(
+          model.Driver driver = model.Driver(
             uid: userCredential.user!.uid,
             displayName: username,
             phoneNumber: userphone,
@@ -75,7 +75,7 @@ class AuthMethods {
           await _firestore
               .collection('drivers')
               .doc(userCredential.user!.uid)
-              .set(user.toJson());
+              .set(driver.toJson());
 
           // DocumentSnapshot newUserSnap = await _firestore
           //     .collection('drivers')
@@ -86,7 +86,7 @@ class AuthMethods {
           //     model.Driver.fromSnap(newUserSnap);
 
           if (context.mounted) {
-            Provider.of<DriverProvider>(context, listen: false).setUser = user;
+            Provider.of<DriverProvider>(context, listen: false).setUser = driver;
 
             res = 'success';
             return res;
