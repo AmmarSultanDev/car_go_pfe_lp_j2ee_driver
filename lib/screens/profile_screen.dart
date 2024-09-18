@@ -157,6 +157,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (mounted) Navigator.of(context).pop();
 
     await AuthMethods().signoutUser(context);
+
+    await Future.delayed(const Duration(seconds: 3));
+
+    await restart();
   }
 
   selectImage() async {
