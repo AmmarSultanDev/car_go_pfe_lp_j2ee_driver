@@ -309,6 +309,7 @@ class FirestoreMethods {
   confirmPayment(String tripId) async {
     try {
       await _firestore.collection('tripRequests').doc(tripId).update({
+        'endedAt': FieldValue.serverTimestamp(),
         'paymentStatus': 'paid',
       });
 
